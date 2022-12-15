@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
+    <display-name>openschedule</display-name>
+    <context-param>
+        <param-name>javax.faces.PROJECT_STAGE</param-name>
+        <param-value>Development</param-value>
+    </context-param>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>bootstrap</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>/faces/*</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>faces/Login.xhtml</welcome-file>
+    </welcome-file-list>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/faces/generic/noauthority.xhtml</location>
+    </error-page>
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/faces/Login.xhtml</location>
+    </error-page>
+    <security-constraint>
+        <display-name>Connection - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>Connection - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/connection/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>connection</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>Dashboard - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>Dashboard - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/dashboard/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>dashboard</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>driver - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>driver - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/driver/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>driver</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>maintenance - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>maintenance - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/maintenance/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>maintenance</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>report - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>report - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/report/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>report</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>railml - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>railml - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/railml/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>railml</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>movementtrip - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>movementtrip - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/movementTrip/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>movementtrip</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>movementtriptemplate - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>movementtriptemplate - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/movementTripTemplate/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>movementtriptemplate</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>plannedService - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>plannedService - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/plannedService/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>plannedservice</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>plannedTrip - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>plannedTrip - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/plannedTrip/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>plannedtrip</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>schedule - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>schedule - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/schedule/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>schedule</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>scheduledDay - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>scheduledDay - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/scheduledDay/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>scheduledday</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>timeBlock - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>timeBlock - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/timeBlock/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>timeblock</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>scheduledService - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>scheduledService - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/scheduledService/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>scheduledservice</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>scheduledTrip - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>scheduledTrip - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/scheduledTrip/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>scheduledtrip</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>scheduleTemplate - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>scheduleTemplate - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/scheduleTemplate/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>scheduletemplate</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>shortturn - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>shortturn - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/shortTurn/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>shortturn</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>trainconsist - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>trainconsist - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/trainConsist/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>trainconsist</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>trainType - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>trainType - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/trainType/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>traintype</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>tripTemplate - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>tripTemplate - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/tripTemplate/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>triptemplate</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>ttObject - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>ttObject - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/ttObject/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>ttobject</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>ttobjectAlt - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>ttobjectAlt - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/ttobjectAlt/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>ttobjectalt</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>user - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>user - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/user/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>user</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>vehicle - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>vehicle - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/vehicle/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>vehicle</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>degradedPlan - page</display-name>
+        <web-resource-collection>
+            <web-resource-name>degradedPlan - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/degradedPlan/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>degradedplan</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <display-name>startpage</display-name>
+        <web-resource-collection>
+            <web-resource-name>startpage - page</web-resource-name>
+            <description/>
+            <url-pattern>/faces/generic/startpage.xhtml</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description/>
+            <role-name>connection</role-name>
+            <role-name>dashboard</role-name>
+            <role-name>driver</role-name>
+            <role-name>maintenance</role-name>
+            <role-name>report</role-name>
+            <role-name>railml</role-name>
+            <role-name>movementtrip</role-name>
+            <role-name>movementtriptemplate</role-name>
+            <role-name>plannedservice</role-name>
+            <role-name>plannedtrip</role-name>
+            <role-name>schedule</role-name>
+            <role-name>scheduledday</role-name>
+            <role-name>scheduledduty</role-name>
+            <role-name>scheduledservice</role-name>
+            <role-name>scheduledtrip</role-name>
+            <role-name>scheduletemplate</role-name>
+            <role-name>shortturn</role-name>
+            <role-name>trainconsist</role-name>
+            <role-name>traintype</role-name>
+            <role-name>triptemplate</role-name>
+            <role-name>ttobject</role-name>
+            <role-name>ttobjectalt</role-name>
+            <role-name>user</role-name>
+            <role-name>vehicle</role-name>
+            <role-name>degradedplan</role-name>
+            <role-name>timeblock</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>openschedulerealm</realm-name>
+        <form-login-config>
+            <form-login-page>/faces/Login.xhtml</form-login-page>
+            <form-error-page>/faces/Login.xhtml</form-error-page>
+        </form-login-config>
+    </login-config>
+    <security-role>
+        <description/>
+        <role-name>connection</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>dashboard</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>driver</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>maintenance</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>report</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>railml</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>movementtrip</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>movementtriptemplate</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>plannedservice</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>plannedtrip</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>schedule</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>scheduledday</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>timeblock</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>scheduledduty</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>scheduledservice</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>scheduledtrip</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>scheduletemplate</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>shortturn</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>trainconsist</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>traintype</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>triptemplate</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>ttobject</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>ttobjectalt</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>user</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>vehicle</role-name>
+    </security-role>
+    <security-role>
+        <description/>
+        <role-name>degradedplan</role-name>
+    </security-role>
+
+    <filter>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
+    <context-param>
+        <param-name>primefaces.UPLOADER</param-name>
+        <param-value>auto</param-value>
+    </context-param>
+
+<!--     Add request filter to handle AAD authentication-->
+<!--    <filter>-->
+<!--        <filter-name>AuthFilter</filter-name>-->
+<!--        <filter-class>authentication.AuthFilter</filter-class>-->
+<!--    </filter>-->
+<!--    <filter-mapping>-->
+<!--        <filter-name>AuthFilter</filter-name>-->
+<!--        <url-pattern>/faces/*</url-pattern>-->
+<!--    </filter-mapping>-->
+
+<!--    <context-param>-->
+<!--        <param-name>client_id</param-name>-->
+<!--        <param-value>069973e8-06c4-4e2e-b295-b01cc230c0a3</param-value>-->
+<!--    </context-param>-->
+
+<!--    <context-param>-->
+<!--        <param-name>secret_key</param-name>-->
+<!--        <param-value>tGg7Q~PCz85sPEn4W01TuO2aj7IKvfnDRr_RD</param-value>-->
+<!--    </context-param>-->
+
+<!--    <context-param>-->
+<!--        <param-name>authority</param-name>-->
+<!--        <param-value>https://login.microsoftonline.com/92c100c2-e28e-4368-ab64-a8973fb7507c/</param-value>-->
+<!--    </context-param>-->
+
+<!--    <context-param>-->
+<!--        <param-name>redirectUriSignin</param-name>-->
+<!--        <param-value>http://localhost:8080/openSchedule-war/faces/generic/startpage.xhtml</param-value>-->
+<!--    </context-param>-->
+
+<!--    <context-param>-->
+<!--        <param-name>redirectUriGraph</param-name>-->
+<!--        <param-value>http://localhost:8443/msal4jsample/graph/me</param-value>-->
+<!--    </context-param>-->
+
+<!--    <context-param>-->
+<!--        <param-name>msGraphEndpointHost</param-name>-->
+<!--        <param-value>https://graph.microsoft.com/</param-value>-->
+<!--    </context-param>-->
+
+</web-app>

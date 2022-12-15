@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template.xhtml">
+    <ui:define name="title">
+        <h:outputText value="#{bundle.ListScheduledDayTitle}" />
+    </ui:define>
+    <ui:define name="body">
+        <h:panelGroup id="messagePanel" layout="block">
+            <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+        </h:panelGroup>
+        <h:panelGrid columns="1" id="panelGrid1">
+            <h:commandLink id="addButton" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not scheduledDayController.addAllowed}">
+                <p:ajax listener="#{scheduledDayController.addNew}" onevent="onAjaxUpdate" update="panelGroup1 @this" />
+            </h:commandLink>
+        </h:panelGrid>
+
+        <h:panelGroup id="panelGroup1">
+            <h:outputText value="#{scheduledDayController.pagination.pageFirstItem + 1}..#{scheduledDayController.pagination.pageLastItem + 1}/#{scheduledDayController.pagination.itemsCount}"/>&nbsp;
+            <h:commandLink action="#{scheduledDayController.previous}" value="#{bundle.Previous} #{scheduledDayController.pagination.pageSize}" rendered="#{scheduledDayController.pagination.hasPreviousPage}"/>&nbsp;
+            <h:commandLink action="#{scheduledDayController.next}" value="#{bundle.Next} #{scheduledDayController.pagination.pageSize}" rendered="#{scheduledDayController.pagination.hasNextPage}"/>&nbsp;
+            <h:dataTable id="scheduledDayList" value="#{scheduledDayController.items}" var="item" styleClass="table table-nonfluid table-striped table-bordered table-hover" rules="all" >
+                <h:column rendered="false">
+                    <f:facet name="header">
+                        <h:outputText value="#{bundle.ListScheduledDayTitle_currentDay}"/>
+                    </f:facet>
+                    <h:commandLink rendered="#{!scheduledDayController.isSelected(item)}" action="#{scheduledDayController.selectForManualLoadDay}" value="Select"/>
+                    <h:outputText rendered="#{scheduledDayController.isSelected(item)}" value="Selected"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{bundle.ListScheduledDayTitle_date}"/>
+                    </f:facet>
+                    <h:panelGroup id="dateP">
+                        <h:outputText value="#{item.dateOfDay}" rendered="#{ not item.creating}">
+                            <f:convertDateTime type="date"/>
+                        </h:outputText>
+                        <p:datePicker id="dateInput" rendered="#{item.creating}" label="#{bundle.DateTime_Date}" value="#{scheduledDayController.dateFilter}" pattern='#{bundle.PF_DAYTYPE_PATTERN}'>
+                            <f:convertDateTime type="date"/>
+                        </p:datePicker>
+                    </h:panelGroup>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{bundle.ListScheduledDayTitle_scheduledDayCode}"/>
+                    </f:facet>
+                    <h:outputText value="#{item.scheduledDayCode}" rendered="#{ not item.creating}"/>
+                </h:column>
+                <ui:remove>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledDayTitle_startYear}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.startYear}" rendered="#{ not item.creating}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledDayTitle_startMonth}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.startMonth}" rendered="#{ not item.creating}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledDayTitle_startDay}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.startDay}" rendered="#{ not item.creating}"/>
+                    </h:column>
+                </ui:remove>
+                <h:column>
+                    <f:facet name="header" rendered="false">
+                        <h:outputText value="#{bundle.ListScheduledDayTitle_archived}"/>
+                        <br />
+                        <h:panelGroup>
+                            <h:selectBooleanCheckbox id="archivedFilterCheckbox"  value="#{scheduledDayController.archive}">
+                                <p:ajax listener="#{scheduledDayController.archiveFilterChanged}" update="@form" />
+                            </h:selectBooleanCheckbox>
+                        </h:panelGroup>
+                    </f:facet>
+                    <h:selectBooleanCheckbox value="#{item.archived}" disabled="true"/>
+                </h:column>
+                <ui:remove>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledDayTitle_schedulingState}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.schedulingState}" rendered="#{ not item.creating}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledDayTitle_archivedState}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.archivedState}" rendered="#{ not item.creating}"/>
+                    </h:column>
+                </ui:remove>
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{bundle.ListScheduledDayTitle_active}"/>
+                        <br />
+                        <h:panelGroup>
+                            <h:selectBooleanCheckbox id="activeFilterCheckbox"  value="#{scheduledDayController.active}">
+                                <p:ajax listener="#{scheduledDayController.activeFilterChanged}" update="@form" />
+                            </h:selectBooleanCheckbox>
+                        </h:panelGroup>
+                    </f:facet>
+                    <h:panelGroup id="activeP">
+                        <h:selectBooleanCheckbox id="activeCheckbox" value="#{item.active}" disabled="#{not item.editing}"/>
+                    </h:panelGroup>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="&nbsp;"/>
+                    </f:facet>
+                    <h:panelGroup id="commandP">
+                        <h:commandLink id="detailsButton"  styleClass="icon-search" title="#{bundle.Tooltip_View}" rendered="false" action="#{scheduledDayController.prepareView}">
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="editButton"  styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not item.editing}">
+                            <p:ajax event="click" onevent="onAjaxUpdate" update=":form1:panelGrid1 dateP activeP commandP" listener="#{scheduledDayController.activateEdit(item)}" />
+                        </h:commandLink>
+                        <h:commandLink id="saveButton" styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{item.editing}">
+                            <p:ajax event="click" process="@this dateP activeP" update=":form1:panelGrid1 :form1:panelGroup1 :form1:messagePanel" onevent="onAjaxUpdate" listener="#{scheduledDayController.save(item)}"/>
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="cancelButton" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" rendered="#{item.editing and not item.creating}">
+                            <p:ajax onevent="onAjaxUpdate" event="click" update=":form1:panelGrid1 activeP commandP" listener="#{scheduledDayController.cancel}" />
+                        </h:commandLink>
+                        <h:commandLink id="deleteButton" styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" immediate="true" rendered="#{item.creating}">
+                            <p:ajax onevent="onAjaxUpdate" event="click" update=":form1:panelGrid1 :form1:panelGroup1 :form1:messagePanel" listener="#{scheduledDayController.destroy}"/>
+                        </h:commandLink>
+                    </h:panelGroup>
+                </h:column>
+            </h:dataTable>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>
+
+</html>

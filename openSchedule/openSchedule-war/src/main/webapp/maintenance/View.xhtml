@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewMaintenanceTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block" styleClass="alert-info">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:panelGroup>
+                <h:outputText class="col-lg-3 control-label" value="#{bundle.ViewMaintenanceDrivingTimeStatistic}"/>
+                <h:panelGrid columns="1">
+                    <h:commandButton id="clearStatisticsButton" class="btn btn-default" value="#{bundle.ViewMaintenanceClearDrivingTimeStatistic}" action="#{maintenanceController.clearDrivingTimeStatistic()}"/>
+                    <br></br>
+                    <h:commandButton id="saveStatisticsButton" class="btn btn-default" value="#{bundle.ViewMaintenanceSaveDrivingTimeStatistic}" action="#{maintenanceController.saveDrivingTimeStatistic()}"/>
+                </h:panelGrid>
+            </h:panelGroup>
+            <br></br>
+            <br></br>
+            <br></br>
+            <h:panelGroup>
+                <h:outputText class="col-lg-3 control-label" value="#{bundle.ViewMaintenanceLoadScheduledDays}"/>
+                <h:commandButton id="loadDaysButton" class="btn btn-default" value="#{bundle.ViewMaintenanceLoadScheduledDaysButton}" action="#{maintenanceController.loadScheduledDays()}"/>
+            </h:panelGroup>
+            <br></br>
+            <br></br>
+            <br></br>
+            <br></br>
+            <h:panelGroup>
+                <h:outputText class="col-lg-3 control-label" value="#{bundle.ViewMaintenanceDeleteScheduledServices}"/>
+                <h:panelGrid columns="1">
+                    <h:panelGrid columns="4">
+                        <h:outputText value="#{bundle.ViewMaintenanceDeleteAuto1}"></h:outputText>
+                        <h:inputText id="daysAmountInput" styleClass="calendar1 form-control" value="#{maintenanceController.autoDeleteDays}" validatorMessage="#{bundle.ViewMaintenanceValidateDays}" converterMessage="#{bundle.ConvertMessage_days}">
+                            <f:validateLongRange minimum="0"></f:validateLongRange>
+                        </h:inputText>
+                        <h:outputText value="#{bundle.ViewMaintenanceDeleteAuto2}"></h:outputText>
+                        <h:commandButton id="deleteServicesByAmountOfDaysButton" class="btn btn-default" value="#{bundle.ViewMaintenanceDeleteScheduledServicesButton}" action="#{maintenanceController.deleteScheduledServices3()}">
+                        </h:commandButton>
+                    </h:panelGrid>
+                    <br></br>
+                    <h:panelGrid columns="4">
+                        <h:inputText styleClass="calendar1 form-control" value="..." disabled="true">
+                        </h:inputText>
+                        <span class="glyphicon glyphicon-arrow-right"></span>
+                        <h:inputText id="endDate1" label="#{bundle.DateTime_Date}" styleClass="calendar1 form-control" value="#{maintenanceController.endTime1}" onfocus="initCalendar('#{languageBean.localeCodeForCalendar}', '#{bundle.DAYTYPE_PATTERN}')">
+                            <f:convertDateTime type="date" />
+                        </h:inputText>
+                        <h:commandButton id="deleteServicesByEndDateButton" class="btn btn-default" value="#{bundle.ViewMaintenanceDeleteScheduledServicesButton}" action="#{maintenanceController.deleteScheduledServices1()}">
+                        </h:commandButton>
+                    </h:panelGrid>
+                    <br></br>
+                    <h:panelGrid columns="4">
+                        <h:inputText id="startDate" label="#{bundle.DateTime_Date}" styleClass="calendar1 form-control" value="#{maintenanceController.startTime}" onfocus="initCalendar('#{languageBean.localeCodeForCalendar}', '#{bundle.DAYTYPE_PATTERN}')">
+                            <f:convertDateTime type="date" />
+                        </h:inputText>
+                        <span class="glyphicon glyphicon-arrow-right"></span>
+                        <h:inputText id="endDate2" label="#{bundle.DateTime_Date}" styleClass="calendar1 form-control" value="#{maintenanceController.endTime2}"   onfocus="initCalendar('#{languageBean.localeCodeForCalendar}', '#{bundle.DAYTYPE_PATTERN}')">
+                            <f:convertDateTime type="date" />
+                        </h:inputText>
+                        <h:commandButton id="deleteServicesByStartAndEndDateButton" class="btn btn-default" value="#{bundle.ViewMaintenanceDeleteScheduledServicesButton}" action="#{maintenanceController.deleteScheduledServices2()}">
+                        </h:commandButton>
+                    </h:panelGrid>
+
+
+                </h:panelGrid>
+            </h:panelGroup>
+            <p:separator />                        
+            <h:outputText class="col-lg-3 control-label" value="#{bundle.EL_Info}"/>
+            <br></br>
+            <p:dataTable id="eventsList" value="#{maintenanceController.scheduleEvents}" var="event" tableStyle="width:100%" styleClass="table table-nonfluid table-striped table-hover">
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{bundle.EL_HeaderTime}"/>
+                    </f:facet>
+                    <h:panelGroup id="eventtime">
+                        <h:outputText value="#{event.eventTime}"/>
+                    </h:panelGroup>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{bundle.EL_HeaderServer}"/>
+                    </f:facet>
+                    <h:panelGroup id="server">
+                        <h:outputText value="#{event.serverName}"/>
+                    </h:panelGroup>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{bundle.EL_HeaderObject}"/>
+                    </f:facet>
+                    <h:panelGroup id="objname">
+                        <h:outputText value="#{event.name}"/>
+                    </h:panelGroup>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{bundle.EL_HeaderEventText}"/>
+                    </f:facet>
+                    <h:panelGroup id="eventtext">
+                        <h:outputText value="#{event.eventText}"/>
+                    </h:panelGroup>
+                </p:column>
+            </p:dataTable>
+             <p:dataTable id="timersList" value="#{maintenanceController.timers}" var="confTimer" tableStyle="width:100%" styleClass="table table-nonfluid table-striped table-hover">
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{bundle.TimerListHeaderTimerInfo}"/>
+                    </f:facet>
+                    <h:panelGroup id="timerInfo">                        
+                        <h:outputText rendered="#{confTimer != null and confTimer.info != null}" value="#{confTimer.info}"/>
+                        <ui:remove>
+                            <h:outputText value="NOT WORKING ON 5.184"/>                        
+                        </ui:remove>                            
+                    </h:panelGroup>
+                </p:column>
+                <p:column>
+                    <f:facet name="header">
+                        <h:outputText value="#{bundle.TimerListHeaderNextTimeOut}"/>
+                    </f:facet>
+                    <h:panelGroup id="timerNext">
+                        
+                        <h:outputText rendered="#{confTimer != null and confTimer.nextTimeout != null}" value="#{confTimer.nextTimeout}"/>
+                        <ui:remove>
+                            <h:outputText value="NOT WORKING ON 5.184"/> 
+                        </ui:remove>
+                        
+                    </h:panelGroup>
+                </p:column>
+             </p:dataTable>                                         
+        </ui:define>
+    </ui:composition>
+</html>
+ 

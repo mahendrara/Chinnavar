@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListScheduledDutyTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <div id="filterControl" class="panel panel-default">
+                <div class="panel-body form-inline">
+                    <h:panelGrid columns="2" style="float:left; margin-right: 10px;">
+                        <p:outputLabel for="scheduledDutyDate" value="#{bundle.Filter_Date}"/>
+                        <p:datePicker id="scheduledDutyDate" label="#{bundle.DateTime_Date}" value="#{scheduledDutyController.dateFilter}" pattern='#{bundle.PF_DAYTYPE_PATTERN}'>
+                            <p:ajax event="dateSelect" listener="#{scheduledDutyController.resetPagination()}" update="@form"/>                            
+                        </p:datePicker>                        
+                    </h:panelGrid>
+                </div>
+            </div>
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <ui:remove>
+                <h:commandLink styleClass="icon-plus" title="#{bundle.Tooltip_Add}" action="#{scheduledDutyController.addNew}" disabled="true" />
+                <br />
+            </ui:remove>
+            <h:outputText escape="false" value="#{bundle.ListDutyEmpty}" rendered="#{scheduledDutyController.items.rowCount == 0}"/>
+            <h:panelGroup>
+                <h:outputText value="#{scheduledDutyController.pagination.pageFirstItem + 1}..#{scheduledDutyController.pagination.pageLastItem + 1}/#{scheduledDutyController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink action="#{scheduledDutyController.previous}" value="#{bundle.Previous} #{scheduledDutyController.pagination.pageSize}" rendered="#{scheduledDutyController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink action="#{scheduledDutyController.next}" value="#{bundle.Next} #{scheduledDutyController.pagination.pageSize}" rendered="#{scheduledDutyController.pagination.hasNextPage}"/>&nbsp;
+                <h:dataTable value="#{scheduledDutyController.items}" var="item" styleClass="table table-nonfluid table-striped table-bordered table-hover" rules="all" >
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListDutyTitle_description}"/>
+                        </f:facet>
+                        <h:outputText rendered="#{not item.editing}" value="#{item.description}"/>
+                        <h:inputText value="#{item.description}" rendered="#{item.editing}" styleClass="col-lg-12" required="true" requiredMessage="#{bundle.RequiredMessage_description}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_area}"/>
+                            <br/>
+                            <h:panelGroup>
+                                <h:selectOneMenu value="#{scheduledDutyController.selectedArea}" styleClass="form-control" converter="#{TTObjectConverter}">
+                                    <f:selectItems value="#{scheduledDutyController.areaFilter}" var="areaItem" itemLabel="#{areaItem.getText(languageBean.OSLocale)}" itemValue="#{areaItem}">
+                                    </f:selectItems>
+                                    <p:ajax listener="#{scheduledDutyController.filterChanged}" update="@form" />
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </f:facet>
+                        <h:outputText value="#{item.areaObj.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                        <h:panelGroup>
+                            <h:selectOneMenu value="#{item.areaObj}" rendered="#{item.editing}" converter="#{TTObjectConverter}">
+                                <f:selectItems value="#{scheduledDutyController.areas}" var="areaItem" itemLabel="#{areaItem.getText(languageBean.OSLocale)}" itemValue="#{areaItem}">
+                                </f:selectItems>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_plannedStartObj}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.plannedStartObj.description}"/>
+
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_plannedStopObj}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.plannedStopObj.description}"/>
+
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListDutyTitle_dutytype}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.tripType.description}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_startTime}"/>
+                        </f:facet>
+                        <h:panelGroup id="startTimeP">
+                            <h:outputText value="+#{item.dayForPlannedStartTime} #{bundle.day} " rendered="#{item.dayForPlannedStartTime>0}"></h:outputText>
+                            <h:outputText id="col6" value="#{item.plannedStartTime}" rendered="#{not item.editing}">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:outputText>
+                            <h:inputText label="#{bundle.DateTime_Time}" styleClass="timePickerInput1 form-control"  rendered="#{item.editing}" value="#{item.plannedStartTime}" required="true" maxlength="8" size="8" requiredMessage="#{bundle.RequiredMessage_starttime}"  onfocus="initTimePickerWithTime('#{languageBean.locale.displayLanguage}',#{item.plannedStartTime.hours},#{item.plannedStartTime.minutes},#{item.plannedStartTime.seconds})">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:inputText>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- END TIME -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_endTime}"/>
+                        </f:facet>
+                        <h:panelGroup id="endTimeP">
+                            <h:outputText value="+#{item.dayForPlannedStopTime} #{bundle.day} " rendered="#{item.dayForPlannedStopTime>0}"></h:outputText>
+                            <h:outputText id="col7" value="#{item.plannedStopTime}">
+                                <f:convertDateTime type="time"  pattern="HH:mm:ss"/>
+                            </h:outputText>
+                        </h:panelGroup>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_duration}"/>
+                        </f:facet>
+                        <h:outputText value="+#{item.dayForPlannedDuration} #{bundle.day} " rendered="#{item.dayForPlannedDuration>0}"></h:outputText>
+                        <h:outputText value="#{item.timeForPlannedDuration}">
+                        </h:outputText>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:commandLink id="detail" styleClass="icon-search" title="#{bundle.Tooltip_View}" rendered="#{not item.creating}" action="#{scheduledDutyController.prepareView(item)}">
+                        </h:commandLink>
+                        <ui:remove>
+                            <h:outputText value=" "/>
+                            <h:commandLink styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" action="#{scheduledDutyController.activateEdit(item)}" disabled="true" rendered="#{not item.editing}"/>
+                            <h:commandLink styleClass="icon-save" title="#{bundle.Tooltip_Save}" action="#{scheduledDutyController.save(item)}" rendered="#{item.editing}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" action="#{scheduledDutyController.cancel(item)}" immediate="true" rendered="#{item.editing and !item.creating}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" action="#{scheduledDutyController.destroy}" immediate="true" disabled="true"/>
+                        </ui:remove>
+                    </h:column>
+                </h:dataTable>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+</html>

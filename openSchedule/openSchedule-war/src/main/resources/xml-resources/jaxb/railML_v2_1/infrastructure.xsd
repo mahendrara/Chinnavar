@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!-- $Id$ -->
+<xs:schema xmlns:rail="http://www.railml.org/schemas/2011" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://www.railml.org/schemas/2011" elementFormDefault="qualified" version="2.1">
+
+  <xs:annotation>
+    <xs:documentation>Copyright (c) railML.org; All Rights Reserved.</xs:documentation>
+    <xs:documentation>This work is licensed under a Creative Commons Attribution 2.0 License. http://creativecommons.org/licenses/by/2.0/</xs:documentation>
+    <xs:documentation>For further information see: http://www.railml.org/</xs:documentation>
+    <xs:documentation>Content of this file: XML Schema for railML(R) 2.0 Definition of elements (partially hidden as complex type) for infrastructure sub schema (IS), uses infrastructure types and attribute groups from "xs:include" path</xs:documentation>
+  </xs:annotation>
+
+  <xs:include schemaLocation="infrastructureTypes.xsd" />
+
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/03/xml.xsd" />
+
+  <xs:element name="infrastructure">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="rail:tInfrastructure">
+          <xs:sequence>
+            <xs:element name="infraAttrGroups" type="rail:eInfraAttrGroup" minOccurs="0" />
+            <xs:element name="tracks" type="rail:eTracks" minOccurs="0" />
+            <xs:element name="trackGroups" type="rail:eTrackGroups" minOccurs="0" />
+            <xs:element name="operationControlPoints" type="rail:eOperationControlPoints" minOccurs="0" />
+            <xs:element name="controllers" type="rail:eControllers" minOccurs="0" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="eOperationControlPoints">
+    <xs:sequence>
+      <xs:element name="ocp" type="rail:eOcp" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eOcp">
+    <xs:complexContent>
+      <xs:extension base="rail:tOperationControlPoint">
+        <xs:sequence>
+          <xs:element name="propOperational" type="rail:eOcpPropOperational" minOccurs="0" />
+          <xs:element name="propService" type="rail:tOcpPropService" minOccurs="0" />
+          <xs:element name="propEquipment" type="rail:eOcpPropEquipment" minOccurs="0" />
+          <xs:element name="propOther" type="rail:eOcpPropOther" minOccurs="0" />
+          <xs:element name="tsi" type="rail:tOcpTsi" minOccurs="0" />
+          <xs:element name="area" type="rail:tOcpArea" minOccurs="0" />
+          <xs:element name="geoCoord" type="rail:tGeoCoord" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eOcpPropOperational">
+    <xs:complexContent>
+      <xs:extension base="rail:tOcpPropOperational">
+        <xs:sequence>
+          <xs:element name="uptime" type="rail:tOcpUptime" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eOcpPropOther">
+    <xs:complexContent>
+      <xs:extension base="rail:tOcpPropOther">
+        <xs:sequence>
+          <xs:element name="additionalName" type="rail:tOcpAdditionalName" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>Deprecated for next major release, use "additionalName" in "ocp" instead.</xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eOcpPropEquipment">
+    <xs:choice>
+      <xs:element name="summary" type="rail:tOcpPropEquipmentSummary" />
+      <xs:element name="trackRef" type="rail:tTrackRefInGroup" maxOccurs="unbounded" />
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="eControllers">
+    <xs:sequence>
+      <xs:element name="controller" type="rail:tController" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eInfraAttrGroup">
+    <xs:sequence>
+      <xs:element name="infraAttributes" type="rail:eInfraAttr" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eLocallyControlledArea">
+    <xs:complexContent>
+      <xs:extension base="rail:tLocallyControlledArea">
+        <xs:sequence>
+          <xs:element name="trackRef" type="rail:tTrackRefInGroup" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eLine">
+    <xs:complexContent>
+      <xs:extension base="rail:tLine">
+        <xs:sequence>
+          <xs:element name="lineDescr" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+          <xs:element name="trackRef" type="rail:tTrackRefInGroup" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eTrackGroups">
+    <xs:sequence>
+      <xs:element name="line" type="rail:eLine" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="locallyControlledArea" type="rail:eLocallyControlledArea" minOccurs="0" maxOccurs="unbounded" />
+      <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTracks">
+    <xs:sequence>
+      <xs:element name="track" type="rail:eTrack" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTrack">
+    <xs:complexContent>
+      <xs:extension base="rail:tTrack">
+        <xs:sequence>
+          <xs:element name="trackDescr" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+          <xs:element name="trackTopology" type="rail:eTrackTopology" />
+          <xs:element name="trackElements" type="rail:eTrackElements" minOccurs="0" />
+          <xs:element name="ocsElements" type="rail:eOcsElements" minOccurs="0" />
+          <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>Deprecated for next major release, use "generic any element" instead.</xs:documentation>
+            </xs:annotation>
+          </xs:any>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eTrackTopology">
+    <xs:sequence>
+      <xs:element name="trackBegin" type="rail:eTrackNode" />
+      <xs:element name="trackEnd" type="rail:eTrackNode" />
+      <xs:element name="mileageChanges" type="rail:eMileageChanges" minOccurs="0" />
+      <xs:element name="connections" type="rail:eConnections" minOccurs="0" />
+      <xs:element name="crossSections" type="rail:eCrossSections" minOccurs="0" />
+      <xs:element name="borders" type="rail:eBorder" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTrackNode">
+    <xs:complexContent>
+      <xs:extension base="rail:tTrackNode">
+        <xs:choice>
+          <xs:element name="connection" type="rail:tConnectionData" />
+          <xs:element name="bufferStop" type="rail:tBufferStop" />
+          <xs:element name="openEnd" type="rail:tOpenEnd"></xs:element>
+          <xs:element name="macroscopicNode" type="rail:tMacroscopicNode"></xs:element>
+        </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eSwitch">
+    <xs:complexContent>
+      <xs:extension base="rail:tSwitch">
+        <xs:sequence>
+          <xs:element name="connection" type="rail:tSwitchConnectionData" maxOccurs="3" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eCrossing">
+    <xs:complexContent>
+      <xs:extension base="rail:tCrossing">
+        <xs:sequence>
+          <xs:element name="connection" type="rail:tSwitchConnectionData" maxOccurs="3" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eMileageChanges">
+    <xs:sequence>
+      <xs:element name="mileageChange" type="rail:tMileageChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eConnections">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="switch" type="rail:eSwitch" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="crossing" type="rail:eCrossing" minOccurs="0" maxOccurs="unbounded" />
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="eCrossSections">
+    <xs:sequence>
+      <xs:element name="crossSection" type="rail:tCrossSection" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eBorder">
+    <xs:sequence>
+      <xs:element name="border" type="rail:tBorder" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTrackElements">
+    <xs:sequence>
+      <xs:element name="speedChanges" type="rail:eSpeedChanges" minOccurs="0" />
+      <xs:element name="gradientChanges" type="rail:eGradientChanges" minOccurs="0" />
+      <xs:element name="radiusChanges" type="rail:eRadiusChanges" minOccurs="0" />
+      <xs:element name="tunnels" type="rail:eTunnels" minOccurs="0" />
+      <xs:element name="bridges" type="rail:eBridges" minOccurs="0" />
+      <xs:element name="levelCrossings" type="rail:eLevelCrossings" minOccurs="0" />
+      <xs:element name="ownerChanges" type="rail:eOwnerChanges" minOccurs="0" />
+      <xs:element name="operationModeChanges" type="rail:eOperationModeChanges" minOccurs="0" />
+      <xs:element name="trainProtectionChanges" type="rail:eTrainProtectionChanges" minOccurs="0" />
+      <xs:element name="electrificationChanges" type="rail:eElectrificationChanges" minOccurs="0" />
+      <xs:element name="powerTransmissionChanges" type="rail:ePowerTransmissionChanges" minOccurs="0" />
+      <xs:element name="axleWeightChanges" type="rail:eAxleWeightChanges" minOccurs="0" />
+      <xs:element name="gaugeChanges" type="rail:eGaugeChanges" minOccurs="0" />
+      <xs:element name="geoMappings" type="rail:eGeoMappings" minOccurs="0" />
+      <xs:element name="trackConditions" type="rail:eTrackConditions" minOccurs="0" />
+      <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eSpeedChanges">
+    <xs:sequence>
+      <xs:element name="speedChange" type="rail:tSpeedChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eGradientChanges">
+    <xs:sequence>
+      <xs:element name="gradientChange" type="rail:tGradientChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eRadiusChanges">
+    <xs:sequence>
+      <xs:element name="radiusChange" type="rail:tRadiusChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTunnels">
+    <xs:sequence>
+      <xs:element name="tunnel" type="rail:tTunnel" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eBridges">
+    <xs:sequence>
+      <xs:element name="brigde" type="rail:tBridge" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eLevelCrossings">
+    <xs:sequence>
+      <xs:element name="levelCrossing" type="rail:tLevelCrossing" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eOwnerChanges">
+    <xs:sequence>
+      <xs:element name="ownerChange" type="rail:tOwnerChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eOperationModeChanges">
+    <xs:sequence>
+      <xs:element name="operationModeChange" type="rail:tOperationModeChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTrainProtectionChanges">
+    <xs:sequence>
+      <xs:element name="trainProtectionChange" type="rail:tTrainProtectionChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eElectrificationChanges">
+    <xs:sequence>
+      <xs:element name="electrificationChange" type="rail:tElectrificationChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ePowerTransmissionChanges">
+    <xs:sequence>
+      <xs:element name="powerTransmissionChange" type="rail:tPowerTransmissionChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eAxleWeightChanges">
+    <xs:sequence>
+      <xs:element name="axleWeightChange" type="rail:tAxleWeightChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eGaugeChanges">
+    <xs:sequence>
+      <xs:element name="gaugeChange" type="rail:tGaugeChange" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eGeoMappings">
+    <xs:sequence>
+      <xs:element name="geoMapping" type="rail:tPlacedElement" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTrackConditions">
+    <xs:sequence>
+      <xs:element name="trackCondition" type="rail:tTrackCondition" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eOcsElements">
+    <xs:sequence>
+      <xs:element name="signals" type="rail:eSignals" minOccurs="0" />
+      <xs:element name="trainDetectionElements" type="rail:eTrainDetectionElements" minOccurs="0" />
+      <xs:element name="balises" type="rail:eBalises" minOccurs="0" />
+      <xs:element name="trainProtectionElements" type="rail:eTrainProtectionElements" minOccurs="0" />
+      <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eSignals">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="signal" type="rail:tSignal" />
+      <xs:element name="signalGroups" type="rail:eSignalGroups" />
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="eSignalGroups">
+    <xs:sequence>
+      <xs:element name="signalGroup" type="rail:eSignalGroup" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eSignalGroup">
+    <xs:complexContent>
+      <xs:extension base="rail:tSignalGroup">
+        <xs:sequence>
+          <xs:element name="signalRef" type="rail:tSignalRefInGroup" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eTrainDetectionElements">
+    <xs:choice minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="trainDetector" type="rail:tTrainDetector" />
+      <xs:element name="trackCircuitBorder" type="rail:tTrackCircuitBorder" />
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="eBalises">
+    <xs:sequence>
+      <xs:element name="balise" type="rail:tBalise" maxOccurs="unbounded" />
+      <xs:element name="baliseGroup" type="rail:eBaliseGroup" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eBaliseGroup">
+    <xs:sequence>
+      <xs:element name="baliseRef" type="rail:tBaliseRefInGroup" maxOccurs="8" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTrainProtectionElements">
+    <xs:sequence>
+      <xs:element name="trainProtectionElement" type="rail:tTrainProtectionElement" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eInfraAttr">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithIDAndNameWithoutAny">
+        <xs:all>
+          <xs:element name="owner" type="rail:tOwner" minOccurs="0" />
+          <xs:element name="operationMode" type="rail:tOperationMode" minOccurs="0" />
+          <xs:element name="trainProtection" type="rail:tTrainProtection" minOccurs="0" />
+          <xs:element name="electrification" type="rail:tElectrification" minOccurs="0" />
+          <xs:element name="powerTransmission" type="rail:tPowerTransmission" minOccurs="0" />
+          <xs:element name="axleWeight" type="rail:tAxleWeight" minOccurs="0" />
+          <xs:element name="gauge" type="rail:tGauge" minOccurs="0" />
+          <xs:element name="speeds" type="rail:eSpeeds" minOccurs="0" />
+          <xs:element name="epsgCode" type="rail:tEpsgCode" minOccurs="0" />
+          <xs:element name="generalInfraAttributes" type="rail:eGeneralInfraAttributes" minOccurs="0" />
+        </xs:all>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eSpeeds">
+    <xs:sequence>
+      <xs:element name="speed" type="rail:tSpeedInfo" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eGeneralInfraAttributes">
+    <xs:sequence>
+      <xs:element name="generalInfraAttribute" type="rail:eGeneralInfraAttribute" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eGeneralInfraAttribute">
+    <xs:sequence>
+      <xs:element name="attributes" type="rail:eAttributes" minOccurs="0" />
+      <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eAttributes">
+    <xs:sequence>
+      <xs:element name="attribute" type="rail:tAttribute" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="infrastructureVisualizations">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="visualization" type="rail:eInfrastructureVisualization" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute ref="xml:base" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="eInfrastructureVisualization">
+    <xs:complexContent>
+      <xs:extension base="rail:tInfrastructureVisualization">
+        <xs:sequence>
+          <xs:element name="lineVis" type="rail:eLineVis" minOccurs="0" maxOccurs="unbounded" />
+          <xs:element name="ocpVis" type="rail:eOcpVis" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eLineVis">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithReference">
+        <xs:sequence>
+          <xs:element name="trackVis" type="rail:eTrackVis" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eTrackVis">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithReference">
+        <xs:sequence>
+          <xs:element name="trackElementVis" type="rail:eTrackElementVis" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eTrackElementVis">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithReference">
+        <xs:sequence>
+          <xs:element name="position" type="rail:tPoint" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eOcpVis">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithReference">
+        <xs:sequence>
+          <xs:element name="position" type="rail:tPoint" />
+          <xs:element name="size" type="rail:tSize" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

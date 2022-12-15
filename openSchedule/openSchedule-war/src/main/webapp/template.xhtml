@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+        <link rel="stylesheet" type="text/css" href="/openSchedule-war/resources/css/default.css"></link>
+        <link rel="stylesheet" type="text/css" href="/openSchedule-war/resources/css/bootstrap.min.css"></link>
+        <link rel="stylesheet" type="text/css" href="/openSchedule-war/resources/css/font-awesome/css/font-awesome.css"></link>
+        <link rel="stylesheet" type="text/css" href="/openSchedule-war/resources/css/datepicker3.css"></link>
+        <script type="text/javascript" src="/openSchedule-war/resources/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/openSchedule-war/resources/js/moment-with-locales.min.js"></script>
+        <script type="text/javascript" src="/openSchedule-war/resources/js/common.js"></script>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title><ui:insert name="title">#{bundle.Title}</ui:insert></title>
+
+    </h:head>
+    <f:view locale="#{languageBean.locale}">
+        <h:body>
+            <h:form id="menu">
+                <!-- This is navigation bar containing menus -->
+                <div class="navbar navbar-fixed-top">
+                    <div class="inner">
+                        <div class="nav-collapse collapse navbar-responsive-collapse"> 
+                            <!-- DEFAULT ACTIONS MENU -->
+                            <ul class="nav navbar-nav"> 
+                                <!-- Server time -->
+                                <li>
+                                    <!--<span style="font-size:small">
+                                    #{bundle.ServerTime}
+                                    <h:outputText id="serverTime" value="#{loginBean.serverTime}" class="pull-left">
+                                        <f:convertDateTime type="time" pattern="HH:mm"/>
+                                    </h:outputText>
+                                    </br>
+
+                                </span>-->
+
+                                </li>
+
+                                <!-- Logo and Name -->
+                                <li>
+                                    <img src="/openSchedule-war/resources/img/bombardier.jpg" class='logo_img pull-left' alt=""></img>
+                                    <h2 class="pull-left">#{bundle.Title}</h2>
+                                </li>
+                                <!-- TIMETABLE - PULLDOWN MENU -->
+                                <li class="main_menu dropdown dropdown-big">
+                                    <a id="timetableButton" href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-table"></i> #{bundle.MainMenuTimetable}<b class="caret"></b></a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li role="presentation" class="dropdown-header">#{bundle.MenuSchedules}</li>
+                                        <li role="presentation"><h:commandLink id="scheduleTemplateButton" immediate="true" tabindex="-1" value="#{bundle.MenuScheduleTemplate}" action="#{scheduleTemplateController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink id="scheduleButton" immediate="true" tabindex="-1" value="#{bundle.MenuSchedule}"  action="#{scheduleController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink id="timeBlockButton" immediate="true" tabindex="-1" value="#{bundle.MenuTimeBlock}" rendered="#{configBean.getConfig().getPage('timeBlock').visible}"  action="#{timeBlockController.prepareList}"/></li>
+                                        <li role="presentation" class="divider"></li>
+                                        <li role="presentation" class="dropdown-header">#{bundle.MenuTripTemplate}</li>
+                                        <li role="presentation"><h:commandLink id="tripTemplateButton" immediate="true" tabindex="-1" value="#{bundle.MenuTripTemplate}" action="#{tripTemplateController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink id="movementTemplateButton" immediate="true" tabindex="-1" value="#{bundle.MenuMovementTemplate}" action="#{movementTripTemplateController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink id="movementButton" immediate="true" tabindex="-1" value="#{bundle.MenuMovement}" action="#{movementTripController.prepareList}"/></li>
+                                        <li role="presentation" class="divider"></li>
+                                        <li role="presentation" class="dropdown-header">#{bundle.MenuLongTerm}</li>
+                                        <li role="presentation"><h:commandLink id="plannedServiceButton" immediate="true" tabindex="-1" value="#{bundle.MenuPlannedService}" action="#{plannedServiceController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink id="plannedTripButton" immediate="true" tabindex="-1" value="#{bundle.MenuPlannedTrip}" action="#{plannedTripController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink id="plannedDutyButton" immediate="true" tabindex="-1" value="#{bundle.MenuPlannedDuty}" rendered="#{configBean.getConfig().getPage('duty').visible}" action="#{plannedDutyController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink immediate="true" rendered="false" disabled="true" tabindex="-1" value="#{MenuConnection}" action="connections_info"/></li>
+                                        <li role="presentation" class="divider"></li>
+                                        <li role="presentation" class="dropdown-header">#{bundle.MenuShortTerm}</li>
+                                        <li role="presentation"><h:commandLink id="scheduledDayButton" immediate="true" tabindex="-1" value="#{bundle.MenuScheduledDay}" action="#{scheduledDayController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink id="scheduledServiceButton" immediate="true" tabindex="-1" value="#{bundle.MenuScheduledService}" action="#{scheduledServiceController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink id="scheduledTripButton" immediate="true" tabindex="-1" value="#{bundle.MenuScheduledTrip}" action="#{scheduledTripController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink id="scheduledDutyButton" immediate="true" tabindex="-1" value="#{bundle.MenuScheduledDuty}" rendered="#{configBean.getConfig().getPage('duty').visible}" action="#{scheduledDutyController.prepareList}"/></li>
+                                        <li role="presentation"><h:commandLink id="degradedPlanButton" immediate="true" tabindex="-1" value="#{bundle.MenuDegradedPlan}" action="#{degradedPlanController.prepareList}"/></li>
+                                    </ul>
+                                </li>
+                                <!-- OBJECTS - PULLDOWN MENU -->
+                                <li class="main_menu dropdown dropdown-big">
+                                    <a id="moreButton" href="#" class="dropdown-toggle" data-toggle="dropdown">#{bundle.MainMenuObjects}<b class="caret"></b></a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li role="presentation" class="dropdown-header">#{bundle.MenuTrainAndTracks}</li>
+                                        <li><h:commandLink id="trainButton" immediate="true" tabindex="-1" value="#{bundle.MenuTrain}" action="#{trainConsistController.prepareList}"/></li>
+                                        <li><h:commandLink id="trainTypeButton" immediate="true" tabindex="-1" value="#{bundle.MenuTrainTypes}" action="#{TrainTypeController.prepareList}"/></li>
+                                        <li><h:commandLink id="shortTurnButton" immediate="true" tabindex="-1" value="#{bundle.MenuShortTurns}" action="#{shortTurnController.prepareList}"/></li>
+                                        <li class="divider"></li>
+                                        <li role="presentation" class="dropdown-header">#{bundle.MenuTimetableObjects}</li>
+                                        <li><h:commandLink id="timetableObjectButton" immediate="true" tabindex="-1" value="#{bundle.MenuTTObjects}" action="#{TTObjectController.prepareList}"/></li>
+                                        <li><h:commandLink id="timetableObjectAlternativeButton" immediate="true" tabindex="-1" value="#{bundle.MenuTimetableAlternatives}" action="#{TTObjectAltController.prepareList}"/></li>
+                                        <li><h:commandLink id="locationGroupsButton" immediate="true" tabindex="-1" value="#{bundle.MenuTTLocationGroups}" action="#{TTLocationGroupsController.prepareList}"/></li>
+                                        <li><h:commandLink id="driverButton" immediate="true" tabindex="-1" value="#{bundle.MenuDrivers}" action="#{driverController.prepareList}"/></li>
+                                        <li class="divider"></li>
+                                        <li role="presentation" class="dropdown-header">#{bundle.MenuOthers}</li>
+                                        <li><h:commandLink id="timetableMaintenanceButton" immediate="true" tabindex="-1" value="#{bundle.MenuMaintenance}" action="#{maintenanceController.prepareView}"/></li>
+                                        <li><h:commandLink id="railmlButton" immediate="true" tabindex="-1" value="#{bundle.MenuRailML}" rendered="true" action="railml_view"/></li>
+                                        <li><h:commandLink id="reportButton" immediate="true" tabindex="-1" value="#{bundle.MenuReport}" action="report_view"/></li>
+                                    </ul>
+                                </li>
+                                <!-- DASHBOARD - PULLDOWN MENU -->
+                                <li class="main_menu">
+                                    <h:commandLink immediate="true" rendered="false" value=" #{bundle.MainMenuPD}" styleClass="icon-dashboard" action="dashboard_info2"/>
+                                    <!--<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-dashboard"></i>Performance Dashboard<b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
+                                        <li><p:commandLink ajax="false" value="By KPI" action="dashboard_info"></p:commandLink></li>
+                                        <li><p:commandLink ajax="false" value="By Location" action="dashboard_info2"></p:commandLink></li> 
+                                    </ul>-->
+                                </li>
+                                <!-- TRAFFIC NOTIFICATIONS - PULLDOWN MENU -->
+                                <li class="main_menu">
+                                    <h:commandLink immediate="true" rendered="false" value=" #{bundle.MainMenuTrafficNotification}" styleClass="icon-bell" action="traffic_notification"/> 
+                                </li>
+
+                            </ul>
+                            <ul class="nav pull-right">
+                                <br/>
+                                <h:panelGrid columns="2" style="font-size:small; color: #777; text-shadow: 0 1px 0 #fff;">
+                                    <h:outputText value="#{bundle.ServerTime}"/>
+                                    <h:outputText id="serverTime" value="#{loginBean.serverTime}">
+                                        <f:convertDateTime type="time" pattern="HH:mm"/>
+                                    </h:outputText>
+                                    <h:outputText value="#{bundle.Version}"/>
+                                    <h:outputText value="#{loginBean.version}"/> 
+                                    <p:poll interval="60" update="serverTime" />
+                                </h:panelGrid>
+                            </ul>
+                            <!-- USER MENU -->
+                            <ul class="nav pull-right">
+                                <li class="main_menu dropdown pull-right">            
+                                    <a id="user_options_button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                        <i class="icon-user"></i>  #{loginBean.getUser().getName()} <b class="caret"></b>              
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <!-- <li><a href="#"><i class="icon-user"></i> #{bundle.UserProfile}</a></li> -->           
+                                        <!-- <li><a href="#"><i class="icon-cogs"></i> #{bundle.UserSetting}</a></li> -->
+                                        <li><h:commandLink id="user_list_button" immediate="true" action="#{UserController.prepareList}"><i class="icon-cogs"/> #{bundle.MenuUsers}</h:commandLink></li>
+                                        <li><h:commandLink id="logout_button" immediate="true" action="#{loginBean.logoutAction}"><i class="icon-off"/> #{bundle.LoginLogout}</h:commandLink>  </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <!-- LANGUAGE SELECTION MENU -->
+                            <ul class="nav pull-right">
+                                <li class="main_menu dropdown pull-right">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                        <i></i> #{languageBean.localeCode} <b class="caret"></b>              
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <ui:repeat value="#{languageBean.localeCodes.keySet().toArray()}" var="locale">
+                                            <li>
+                                                <h:commandLink action="#{languageBean.setLocaleCode(locale)}" value="#{locale}"></h:commandLink>
+                                            </li>
+                                        </ui:repeat>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </h:form>
+            <!-- MAIN FORM TO INSERT NORMAL DATA ELEMENTS -->
+            <h:form id="form1">
+                <div class="main_content">
+                    <div class='row'>
+                        <h4 class="col-lg-10" ><ui:insert name="title">Default Title</ui:insert></h4>
+                        <ui:insert name="setting" class="col-lg-2"></ui:insert>
+                    </div>
+                    <ui:insert id="body" name="body" >Default Body</ui:insert>
+                </div>
+            </h:form>
+            <!-- EXTRA FORM TO PERFORM MULTIPART DATA ELEMENTS (SUCHS AS FILE UPLOAD) -->
+            <h:form id="multipartForm" enctype="multipart/form-data">
+                <ui:insert id="multipartBody" name="multipartBody" ></ui:insert>
+            </h:form>
+            <!-- generic scripts -->
+            <script type="text/javascript">
+                function onAjaxUpdate(data) {
+                    if (data.status === "success") {
+                        initCalendar('#{languageBean.localeCodeForCalendar}', '#{bundle.DAYTYPE_PATTERN}');
+                        initTimePicker('#{languageBean.locale.displayLanguage}');
+                    }
+                    return false;
+                }
+
+                function onAjaxUpdateTry(data) {
+                    alert("in onAjaxUpdate try")
+                    initCalendar('#{languageBean.localeCodeForCalendar}', '#{bundle.DAYTYPE_PATTERN}');
+                    initTimePicker('#{languageBean.locale.displayLanguage}');
+                    return false;
+                }
+            </script>
+        </h:body>
+    </f:view>
+</html>

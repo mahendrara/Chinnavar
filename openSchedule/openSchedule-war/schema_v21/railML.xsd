@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!-- $Id$ -->
+<xs:schema xmlns:rail="http://www.railml.org/schemas/2011" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dc="http://purl.org/dc/elements/1.1/" targetNamespace="http://www.railml.org/schemas/2011" elementFormDefault="qualified" version="2.1">
+
+  <xs:annotation>
+    <xs:documentation>Copyright (c) railML.org; All Rights Reserved.</xs:documentation>
+    <xs:documentation>This work is licensed under a Creative Commons Attribution 2.0 License. http://creativecommons.org/licenses/by/2.0/</xs:documentation>
+    <xs:documentation>For further information see: http://www.railml.org/</xs:documentation>
+    <xs:documentation>Content of this file: XML Schema for railML(R) 2.0 Definition of root element "railml", refers to elements of all sub schemas from "xs:include" paths</xs:documentation>
+  </xs:annotation>
+
+  <xs:include schemaLocation="infrastructure.xsd" />
+  <xs:include schemaLocation="rollingstock.xsd" />
+  <xs:include schemaLocation="timetable.xsd" />
+
+  <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd">
+    <xs:annotation>
+      <xs:documentation>Portions of this software may use XML schemas Copyright (c) 2009 DCMI, the Dublin Core Metadata Initiative. These are licensed under the Creative Commons 3.0 Attribution license.</xs:documentation>
+      <xs:documentation>For further information see: http://dublincore.org/ License link: http://creativecommons.org/licenses/by/3.0/</xs:documentation>
+    </xs:annotation>
+  </xs:import>
+
+  <xs:element name="railml">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="metadata" type="dc:elementContainer" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>flexible collection of Dublin Core metadata based on xs:any according to http://dublincore.org/</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="rail:infrastructure" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>"subschema Infrastructure (IS)" can be outsourced in extra file and imported with xi:include mechanism</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="rail:infrastructureVisualizations" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>DEPRECATED: moving as 'visualizations' inside 'infrastructure'</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="rail:rollingstock" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>"subschema Rollingstock (RS)" can be outsourced in extra file and imported with xi:include mechanism</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="rail:timetable" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>"subschema Timetable (TT)" can be outsourced in extra file and imported with xi:include mechanism</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="version" type="rail:tRailMLVersion">
+        <xs:annotation>
+          <xs:documentation>supported railML version should be declared for software compatibility reasons, valid for all subschemas, don't mix railML versions between subschemas in one XML file</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+
+    <xs:key name="vehicleKey">
+      <xs:selector xpath=".//rail:vehicles/rail:vehicle" />
+      <xs:field xpath="@id" />
+    </xs:key>
+
+    <!-- vehicle reference in rollingstock subschema -->
+    <xs:keyref name="vehicle-vehicleFamilyRefKey" refer="rail:vehicleKey">
+      <xs:selector xpath=".//rail:vehicles/rail:vehicle" />
+      <xs:field xpath="@vehicleFamilyRef" />
+    </xs:keyref>
+    <xs:keyref name="vehicle-vehicleRefKey" refer="rail:vehicleKey">
+      <xs:selector xpath=".//rail:formations/rail:formation/rail:trainOrder/rail:vehicleRef" />
+      <xs:field xpath="@vehicleRef" />
+    </xs:keyref>
+
+    <!-- vehicle reference in timetable subschema -->
+    <xs:keyref name="vehicle-formationTTKeyref" refer="rail:vehicleKey">
+      <xs:selector xpath=".//rail:reservationInfo/rail:booking" />
+      <xs:field xpath="@vehicleRef" />
+    </xs:keyref>
+    <xs:keyref name="vehicle-rosteringKeyref" refer="rail:vehicleKey">
+      <xs:selector xpath=".//rail:rosterings/rail:rostering" />
+      <xs:field xpath="@vehicleRef" />
+    </xs:keyref>
+    <xs:keyref name="vehicle-blockPartKeyref" refer="rail:vehicleKey">
+      <xs:selector xpath=".//rail:blockParts/rail:blockPart" />
+      <xs:field xpath="@vehicleRef" />
+    </xs:keyref>
+
+    <xs:key name="formationKey">
+      <xs:selector xpath=".//rail:formations/rail:formation" />
+      <xs:field xpath="@id" />
+    </xs:key>
+
+    <!-- formation reference in timetable subschema -->
+    <xs:keyref name="formation-formationTTKeyref" refer="rail:formationKey">
+      <xs:selector xpath=".//rail:trainParts/rail:trainPart/rail:formationTT" />
+      <xs:field xpath="@formationRef" />
+    </xs:keyref>
+    <xs:keyref name="formation-rosteringKeyref" refer="rail:formationKey">
+      <xs:selector xpath=".//rail:rosterings/rail:rostering" />
+      <xs:field xpath="@formationRef" />
+    </xs:keyref>
+    <xs:keyref name="formation-blockPartKeyref" refer="rail:formationKey">
+      <xs:selector xpath=".//rail:blockParts/rail:blockPart" />
+      <xs:field xpath="@formationRef" />
+    </xs:keyref>
+
+  </xs:element>
+
+</xs:schema>

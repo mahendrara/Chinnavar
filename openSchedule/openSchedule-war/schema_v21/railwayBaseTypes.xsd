@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!-- $Id$ -->
+<xs:schema xmlns:rail="http://www.railml.org/schemas/2011" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.railml.org/schemas/2011" elementFormDefault="qualified" version="2.1">
+
+  <xs:annotation>
+    <xs:documentation>Copyright (c) railML.org; All Rights Reserved.</xs:documentation>
+    <xs:documentation>This work is licensed under a Creative Commons Attribution 2.0 License. http://creativecommons.org/licenses/by/2.0/</xs:documentation>
+    <xs:documentation>For further information see: http://www.railml.org/</xs:documentation>
+    <xs:documentation>Content of this file: XML Schema for railML(R) 2.0 Definition of attribute groups, simple and complex types, used by more than one sub schema</xs:documentation>
+  </xs:annotation>
+
+  <xs:include schemaLocation="genericRailML.xsd" />
+  <xs:include schemaLocation="railwayUnits.xsd" />
+
+  <xs:complexType name="tTimeSpan">
+    <xs:annotation>
+      <xs:documentation>generic type for time spans/periods in required context</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="from" type="xs:time" use="required" />
+    <xs:attribute name="until" type="xs:time" use="required" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aPeriodTimeSpan">
+    <xs:annotation>
+      <xs:documentation>generic type for time spans/periods in optional context</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="startTime" type="xs:time" />
+    <xs:attribute name="endTime" type="xs:time" />
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="aTimePeriod">
+    <xs:annotation>
+      <xs:documentation>generic type for time spans/periods regarding its dates</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="startDate" type="xs:date" />
+    <xs:attribute name="endDate" type="xs:date" />
+  </xs:attributeGroup>
+
+  <xs:simpleType name="tTimeZone">
+    <xs:annotation>
+      <xs:documentation>timezone as defined in the tz database, e.g. "America/New_York"</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+
+  <xs:complexType name="tBasicBrakeType">
+    <xs:annotation>
+      <xs:documentation>settings and characteristic of a particular brake type or brake application position</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="auxiliaryBrakes" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>provides access to the list of possible auxiliary brake systems</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="rail:aAuxiliaryBrakes" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attributeGroup ref="rail:aBasicBrakeAttributes" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aBasicBrakeAttributes">
+    <xs:attribute name="brakeType" type="rail:tBrakeType" use="required">
+      <xs:annotation>
+        <xs:documentation>vacuum or compressed air brake, hand brake, parking brake, cable brake</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="airBrakeApplicationPosition" type="rail:tAirBrakeApplicationPosition">
+      <xs:annotation>
+        <xs:documentation>base brake switch, one of G, P or R</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="regularBrakeMass" type="rail:tWeightTons">
+      <xs:annotation>
+        <xs:documentation>brake mass for normal brake operations of none-automatic brakes</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="emergencyBrakeMass" type="rail:tWeightTons">
+      <xs:annotation>
+        <xs:documentation>brake mass for emergency brake operations, differs from regular brake mass depending on auxiliary brakes</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="maxDeceleration" type="rail:tAccelerationMeterPerSquareSec">
+      <xs:annotation>
+        <xs:documentation>alternative specification of maximum possible momentary deceleration</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="meanDeceleration" type="rail:tAccelerationMeterPerSquareSec">
+      <xs:annotation>
+        <xs:documentation>alternative specification of effective mean deceleration of a whole brake operation</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:simpleType name="tBrakeType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="none" />
+          <xs:enumeration value="compressedAir">
+            <xs:annotation>
+              <xs:documentation>de: Druckluftbremse</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="vacuum">
+            <xs:annotation>
+              <xs:documentation>de: Saugluftbremse</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="handBrake" />
+          <xs:enumeration value="parkingBrake" />
+          <xs:enumeration value="cableBrake">
+            <xs:annotation>
+              <xs:documentation>de: Seilzugbremse</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="tAirBrakeApplicationPosition">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="N/A" />
+      <xs:enumeration value="G">
+        <xs:annotation>
+          <xs:documentation>Goods</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="P">
+        <xs:annotation>
+          <xs:documentation>Passenger</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="R">
+        <xs:annotation>
+          <xs:documentation>Rapid</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tBrakePercentage">
+    <xs:annotation>
+      <xs:documentation>Brake percentage as value of braking performance in relation to vehicle weight</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:integer">
+      <xs:maxInclusive value="225" />
+      <xs:minInclusive value="6" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:attributeGroup name="aAuxiliaryBrakes">
+    <xs:annotation>
+      <xs:documentation>de: Zusatz-/Hilfsbremsen</xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="brakeUse" type="rail:tBrakeUse" />
+    <xs:attribute name="H" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>de: hydrodynamisch</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="E" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>de: elektro-motorisch</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Mg" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>de: Magnetschienenbremse</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Wb" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>de: Wirbelstrombremse</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ep" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>de: elektro-pneumatisch</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:simpleType name="tBrakeUse">
+    <xs:annotation>
+      <xs:documentation>planned/calculated usage of specified brakes</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="unknown" />
+      <xs:enumeration value="normal" />
+      <xs:enumeration value="emergency" />
+      <xs:enumeration value="both" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tTrainProtectionMedium">
+    <xs:annotation>
+      <xs:documentation>classification of a train protection system by physical medium</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="none" />
+      <xs:enumeration value="mechanical" />
+      <xs:enumeration value="electric" />
+      <xs:enumeration value="inductive" />
+      <xs:enumeration value="magnetic" />
+      <xs:enumeration value="optical" />
+      <xs:enumeration value="radio" />
+      <xs:enumeration value="rail" />
+      <xs:enumeration value="cable" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tTrainProtectionMonitoring">
+    <xs:annotation>
+      <xs:documentation>classification of a train protection system by coverage</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="none" />
+      <xs:enumeration value="intermittent" />
+      <xs:enumeration value="continuous" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tInterlockingTypes">
+    <xs:annotation>
+      <xs:documentation>classification of an interlocking system by kind of implementation</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="none" />
+      <xs:enumeration value="mechanical" />
+      <xs:enumeration value="electro-mechanical" />
+      <xs:enumeration value="electrical">
+        <xs:annotation>
+          <xs:documentation>de: Gleisbildstellwerk, Spurplanstellwerk ...</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="electronical">
+        <xs:annotation>
+          <xs:documentation>de: ESTW</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="ePassengerFacility">
+    <xs:sequence>
+      <xs:element name="places" type="rail:tPlaces" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>list of place capacity of the vehicle divided by particular categories</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="service" type="rail:tService" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>description of any additional service provided per vehicle</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="tPlaces">
+    <xs:annotation>
+      <xs:documentation>description of any places of the passenger car(part)</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="rail:aPlaces" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aPlaces">
+    <xs:attribute name="category" type="rail:tPlaceCategory" use="required" />
+    <xs:attribute name="count" type="rail:tCounter" use="required">
+      <xs:annotation>
+        <xs:documentation>count="0" means: there is no place of this category</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="description" type="rail:tElementDescription" />
+  </xs:attributeGroup>
+
+  <xs:simpleType name="tPlaceCategory">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="class1" />
+          <xs:enumeration value="class2" />
+          <xs:enumeration value="class3" />
+          <xs:enumeration value="standing" />
+          <xs:enumeration value="wheelchair" />
+          <xs:enumeration value="bicycle" />
+          <xs:enumeration value="couchette" />
+          <xs:enumeration value="bed" />
+          <xs:enumeration value="chair" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:complexType name="tService">
+    <xs:annotation>
+      <xs:documentation>description of any service provided by the passenger car(part)</xs:documentation>
+    </xs:annotation>
+    <xs:attributeGroup ref="rail:aService" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aService">
+    <xs:attribute name="name" type="rail:tGenericName" use="required" />
+    <xs:attribute name="count" type="rail:tCounter" use="required">
+      <xs:annotation>
+        <xs:documentation>count="0" means: there is not such a service</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="description" type="rail:tElementDescription" />
+    <xs:attribute name="value" type="xs:decimal">
+      <xs:annotation>
+        <xs:documentation>generic decimal value for additional information of the service, meaning should be clarified by its "description"</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attributeGroup ref="rail:anyAttribute" />
+  </xs:attributeGroup>
+
+  <xs:simpleType name="tNationalSystemsType">
+    <xs:annotation>
+      <xs:documentation>list of common european train control/protection systems</xs:documentation>
+    </xs:annotation>
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ALSEN" />
+          <xs:enumeration value="ALSN" />
+          <xs:enumeration value="ASFA" />
+          <xs:enumeration value="ATB" />
+          <xs:enumeration value="ATBEG" />
+          <xs:enumeration value="ATBEN" />
+          <xs:enumeration value="ATC" />
+          <xs:enumeration value="ATSP" />
+          <xs:enumeration value="ATSS" />
+          <xs:enumeration value="AWS" />
+          <xs:enumeration value="BACC" />
+          <xs:enumeration value="CIR-ELKE" />
+          <xs:enumeration value="CIR-ELKE2" />
+          <xs:enumeration value="Crocodile" />
+          <xs:enumeration value="CSS" />
+          <xs:enumeration value="DATC" />
+          <xs:enumeration value="EBICAB" />
+          <xs:enumeration value="EVM120" />
+          <xs:enumeration value="EVM160" />
+          <xs:enumeration value="Fahrsp" />
+          <xs:enumeration value="GWATP" />
+          <xs:enumeration value="Indusi54" />
+          <xs:enumeration value="Indusi60" />
+          <xs:enumeration value="Indusi60R" />
+          <xs:enumeration value="Integra-Signum" />
+          <xs:enumeration value="KHP" />
+          <xs:enumeration value="KLUBU" />
+          <xs:enumeration value="KVB" />
+          <xs:enumeration value="LS" />
+          <xs:enumeration value="LS90" />
+          <xs:enumeration value="LZB" />
+          <xs:enumeration value="Memor" />
+          <xs:enumeration value="Memor2" />
+          <xs:enumeration value="Mirel" />
+          <xs:enumeration value="PZ80" />
+          <xs:enumeration value="PZB90" />
+          <xs:enumeration value="RS4c" />
+          <xs:enumeration value="SAUTC" />
+          <xs:enumeration value="SAUTCM" />
+          <xs:enumeration value="SAUTU" />
+          <xs:enumeration value="SCMT" />
+          <xs:enumeration value="SELCAB" />
+          <xs:enumeration value="SHP" />
+          <xs:enumeration value="SSC" />
+          <xs:enumeration value="TBL" />
+          <xs:enumeration value="TPWS" />
+          <xs:enumeration value="TVM300" />
+          <xs:enumeration value="TVM430" />
+          <xs:enumeration value="ZSI127" />
+          <xs:enumeration value="ZSI90" />
+          <xs:enumeration value="ZSL90" />
+          <xs:enumeration value="ZST90" />
+          <xs:enumeration value="ZUB121" />
+          <xs:enumeration value="ZUB122" />
+          <xs:enumeration value="ZUB123" />
+          <xs:enumeration value="ZUB262" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="tLineClassificationType">
+    <xs:annotation>
+      <xs:documentation>according RIV</xs:documentation>
+    </xs:annotation>
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="A" />
+          <xs:enumeration value="B1" />
+          <xs:enumeration value="B2" />
+          <xs:enumeration value="B3" />
+          <xs:enumeration value="B4" />
+          <xs:enumeration value="C1" />
+          <xs:enumeration value="C2" />
+          <xs:enumeration value="C3" />
+          <xs:enumeration value="C4" />
+          <xs:enumeration value="CM2" />
+          <xs:enumeration value="CM3" />
+          <xs:enumeration value="CM4" />
+          <xs:enumeration value="D2" />
+          <xs:enumeration value="D3" />
+          <xs:enumeration value="D4" />
+          <xs:enumeration value="E" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+</xs:schema>

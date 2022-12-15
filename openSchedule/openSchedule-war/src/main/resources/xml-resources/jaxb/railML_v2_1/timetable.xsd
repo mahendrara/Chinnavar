@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!-- $Id$ -->
+<xs:schema xmlns:rail="http://www.railml.org/schemas/2011" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.railml.org/schemas/2011" elementFormDefault="qualified" version="2.1">
+
+  <xs:annotation>
+    <xs:documentation>Copyright (c) railML.org; All Rights Reserved.</xs:documentation>
+    <xs:documentation>This work is licensed under a Creative Commons Attribution 2.0 License. http://creativecommons.org/licenses/by/2.0/</xs:documentation>
+    <xs:documentation>For further information see: http://www.railml.org/</xs:documentation>
+    <xs:documentation>Content of this file: XML Schema for railML(R) 2.0 Definition of elements (partially hidden as complex type) for timetable sub schema (TT), uses timetable types and attribute groups from "xs:include" path</xs:documentation>
+  </xs:annotation>
+
+  <xs:include schemaLocation="timetableTypes.xsd" />
+
+  <xs:element name="timetable">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="rail:tTimetable">
+          <xs:sequence>
+            <xs:element name="timetablePeriods" type="rail:eTimetablePeriods" minOccurs="0" />
+            <xs:element name="operatingPeriods" type="rail:eOperatingPeriods" minOccurs="0" />
+            <xs:element name="categories" type="rail:eCategories" minOccurs="0" />
+            <xs:element name="trainParts" type="rail:eTrainParts" minOccurs="0" />
+            <xs:element name="trains" type="rail:eTrains" minOccurs="0" />
+            <xs:element name="trainGroups" type="rail:eTrainGroups" minOccurs="0" />
+            <xs:element name="rosterings" type="rail:eRosterings" minOccurs="0" />
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
+    <xs:key name="timetablePeriodKey">
+      <xs:selector xpath=".//rail:timetablePeriods/rail:timetablePeriod" />
+      <xs:field xpath="@id" />
+    </xs:key>
+    <xs:keyref name="timetablePeriod-operatingPeriodKeyref" refer="rail:timetablePeriodKey">
+      <xs:selector xpath=".//rail:operatingPeriods/rail:operatingPeriod" />
+      <xs:field xpath="@timetablePeriodRef" />
+    </xs:keyref>
+    <xs:keyref name="timetablePeriod-trainPartKeyref" refer="rail:timetablePeriodKey">
+      <xs:selector xpath=".//rail:trainParts/rail:trainPart" />
+      <xs:field xpath="@timetablePeriodRef" />
+    </xs:keyref>
+
+    <xs:key name="operatingPeriodKey">
+      <xs:selector xpath=".//rail:operatingPeriods/rail:operatingPeriod" />
+      <xs:field xpath="@id" />
+    </xs:key>
+    <xs:keyref name="operatingPeriod-trainPartKeyref" refer="rail:operatingPeriodKey">
+      <xs:selector xpath=".//rail:trainParts/rail:trainPart/rail:operatingPeriodRef" />
+      <xs:field xpath="@ref" />
+    </xs:keyref>
+    <xs:keyref name="operatingPeriod-blockPartKeyref" refer="rail:operatingPeriodKey">
+      <xs:selector xpath=".//rail:blockParts/rail:blockPart" />
+      <xs:field xpath="@operatingPeriodRef" />
+    </xs:keyref>
+    <xs:keyref name="operatingPeriod-circulationKeyref" refer="rail:operatingPeriodKey">
+      <xs:selector xpath=".//rail:circulations/rail:circulation" />
+      <xs:field xpath="@operatingPeriodRef" />
+    </xs:keyref>
+    <xs:keyref name="nextOperatingPeriod-circulationKeyref" refer="rail:operatingPeriodKey">
+      <xs:selector xpath=".//rail:circulations/rail:circulation" />
+      <xs:field xpath="@nextOperatingPeriodRef" />
+    </xs:keyref>
+
+    <xs:key name="categoryKey">
+      <xs:selector xpath=".//rail:categories/rail:category" />
+      <xs:field xpath="@id" />
+    </xs:key>
+    <xs:keyref name="category-trainPartKeyref" refer="rail:categoryKey">
+      <xs:selector xpath=".//rail:trainParts/rail:trainPart" />
+      <xs:field xpath="@categoryRef" />
+    </xs:keyref>
+    <xs:keyref name="category-trainPartSequenceKeyref" refer="rail:categoryKey">
+      <xs:selector xpath=".//rail:trains/rail:train/rail:trainPartSequence" />
+      <xs:field xpath="@categoryRef" />
+    </xs:keyref>
+
+    <xs:key name="trainPartKey">
+      <xs:selector xpath=".//rail:trainParts/rail:trainPart" />
+      <xs:field xpath="@id" />
+    </xs:key>
+    <xs:keyref name="trainPart-trainPartSequenceKeyref" refer="rail:trainPartKey">
+      <xs:selector xpath=".//rail:trains/rail:train/rail:trainPartSequence/rail:trainPartRef" />
+      <xs:field xpath="@ref" />
+    </xs:keyref>
+    <xs:keyref name="trainPart-blockPartKeyref" refer="rail:trainPartKey">
+      <xs:selector xpath=".//rail:blockParts/rail:blockPart" />
+      <xs:field xpath="@trainPartRef" />
+    </xs:keyref>
+
+    <xs:key name="trainKey">
+      <xs:selector xpath=".//rail:trains/rail:train" />
+      <xs:field xpath="@id" />
+    </xs:key>
+    <xs:keyref name="train-trainGroupKeyref" refer="rail:trainKey">
+      <xs:selector xpath=".//rail:trainGroups/rail:trainGroup/rail:trainRef" />
+      <xs:field xpath="@ref" />
+    </xs:keyref>
+
+    <xs:key name="blockPartKey">
+      <xs:selector xpath=".//rail:blockParts/rail:blockPart" />
+      <xs:field xpath="@id" />
+    </xs:key>
+    <xs:keyref name="blockPart-blockPartSequenceKeyref" refer="rail:blockPartKey">
+      <xs:selector xpath=".//rail:blocks/rail:block/rail:blockPartSequence/rail:blockPartRef" />
+      <xs:field xpath="@ref" />
+    </xs:keyref>
+
+    <xs:key name="blockKey">
+      <xs:selector xpath=".//rail:blocks/rail:block" />
+      <xs:field xpath="@id" />
+    </xs:key>
+    <xs:keyref name="block-blockPartSequenceKeyref" refer="rail:blockKey">
+      <xs:selector xpath=".//rail:blocks/rail:block/rail:blockPartSequence" />
+      <xs:field xpath="@basicBlockRef" />
+    </xs:keyref>
+    <xs:keyref name="block-circulationKeyref" refer="rail:blockKey">
+      <xs:selector xpath=".//rail:circulations/rail:circulation" />
+      <xs:field xpath="@blockRef" />
+    </xs:keyref>
+    <xs:keyref name="nextBlock-circulationKeyref" refer="rail:blockKey">
+      <xs:selector xpath=".//rail:circulations/rail:circulation" />
+      <xs:field xpath="@nextBlockRef" />
+    </xs:keyref>
+
+  </xs:element>
+
+  <xs:complexType name="eOperatingPeriods">
+    <xs:sequence>
+      <xs:element name="operatingPeriod" type="rail:eOperatingPeriod" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eOperatingPeriod">
+    <xs:complexContent>
+      <xs:extension base="rail:tOperatingPeriod">
+        <xs:sequence>
+          <xs:element name="operatingDay" type="rail:eOperatingDay" minOccurs="0" maxOccurs="unbounded" />
+          <xs:element name="specialService" type="rail:tSpecialService" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eOperatingDay">
+    <xs:complexContent>
+      <xs:extension base="rail:tOperatingDay">
+        <xs:sequence>
+          <xs:element name="operatingDayDeviance" type="rail:tOperatingDayDeviance" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eTimetablePeriods">
+    <xs:sequence>
+      <xs:element name="timetablePeriod" type="rail:eTimetablePeriod" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTimetablePeriod">
+    <xs:complexContent>
+      <xs:extension base="rail:tTimetablePeriod">
+        <xs:sequence>
+          <xs:element name="holidays" type="rail:eHolidays" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eHolidays">
+    <xs:sequence>
+      <xs:element name="holiday" type="rail:tHoliday" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eFormationTT">
+    <xs:complexContent>
+      <xs:extension base="rail:tFormationTT">
+        <xs:sequence>
+          <xs:element name="equipmentUsage" type="rail:eEquipmentUsage" minOccurs="0" />
+          <xs:element name="passengerUsage" type="rail:ePassengerFacility" minOccurs="0" />
+          <xs:element name="reservationInfo" type="rail:eReservationInfo" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eEquipmentUsage">
+    <xs:sequence>
+      <xs:element name="equipment" type="rail:tEquipment" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eReservationInfo">
+    <xs:sequence>
+      <xs:element name="booking" type="rail:tBooking" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eCategories">
+    <xs:sequence>
+      <xs:element name="category" type="rail:eCategory" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eCategory">
+    <xs:complexContent>
+      <xs:extension base="rail:tCategory" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eTrainParts">
+    <xs:sequence>
+      <xs:element name="trainPart" type="rail:eTrainPart" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTrainPart">
+    <xs:complexContent>
+      <xs:extension base="rail:tTrainPart">
+        <xs:sequence>
+          <xs:element name="formationTT" type="rail:eFormationTT" minOccurs="0" />
+          <xs:element name="operatingPeriodRef" type="rail:eOperatingPeriodRef" minOccurs="0" />
+          <xs:element name="ocpsTT" type="rail:eOcpsTT" />
+          <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation>Deprecated for next major release, use "generic any element" instead.</xs:documentation>
+            </xs:annotation>
+          </xs:any>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eOperatingPeriodRef">
+    <xs:complexContent>
+      <xs:extension base="rail:tOperatingPeriodRef">
+        <xs:sequence>
+          <xs:element name="specialService" type="rail:tSpecialService" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eOcpsTT">
+    <xs:sequence>
+      <xs:element name="ocpTT" type="rail:eOcpTT" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eOcpTT">
+    <xs:complexContent>
+      <xs:extension base="rail:tOcpTT">
+        <xs:sequence>
+          <xs:element name="times" type="rail:eArrivalDepartureTimes" minOccurs="0" maxOccurs="unbounded" />
+          <xs:element name="connections" type="rail:eConnectionsTT" minOccurs="0" />
+          <xs:element name="statistics" type="rail:eStatistics" minOccurs="0" />
+          <xs:element name="sectionTT" type="rail:eSectionTT" minOccurs="0" />
+          <xs:element name="stopDescription" type="rail:eStopDescription" minOccurs="0" />
+          <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eArrivalDepartureTimes">
+    <xs:complexContent>
+      <xs:extension base="rail:tArrivalDepartureTimes" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eConnectionsTT">
+    <xs:sequence>
+      <xs:element name="connection" type="rail:tConnectionTT" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eStatistics">
+    <xs:sequence>
+      <xs:element name="statistic" type="rail:eStatistic" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eStatistic">
+    <xs:complexContent>
+      <xs:extension base="rail:tStatistic">
+        <xs:sequence>
+          <xs:element name="mean" type="rail:tStatisticTimes" minOccurs="0" />
+          <xs:element name="median" type="rail:tStatisticTimes" minOccurs="0" />
+          <xs:element name="standardDeviation" type="rail:tStandardDeviationTimes" minOccurs="0" />
+          <xs:element name="statisticAnalyses" type="rail:tStatisticAnalyses" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eSectionTT">
+    <xs:complexContent>
+      <xs:extension base="rail:tSectionTT">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="trackRef" type="rail:tTrackRef" />
+          <xs:element minOccurs="0" name="runTimes" type="rail:tRunTimes" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eStopDescription">
+    <xs:complexContent>
+      <xs:extension base="rail:tStopDescription">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="stopTimes" type="rail:tStopTimes" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eTrains">
+    <xs:sequence>
+      <xs:element name="train" type="rail:eTrain" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTrain">
+    <xs:complexContent>
+      <xs:extension base="rail:tTrain">
+        <xs:sequence>
+          <xs:element name="trainPartSequence" type="rail:eTrainPartSequence" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eTrainPartSequence">
+    <xs:complexContent>
+      <xs:extension base="rail:tTrainPartSequence">
+        <xs:sequence>
+          <xs:element name="trainPartRef" type="rail:tTrainPartRef" maxOccurs="unbounded" />
+          <xs:element name="equipmentUsage" type="rail:eEquipmentUsage" minOccurs="0" />
+          <xs:element name="brakeUsage" type="rail:eBrakeUsage" minOccurs="0" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eBrakeUsage">
+    <xs:complexContent>
+      <xs:extension base="rail:tBasicBrakeType">
+        <xs:attributeGroup ref="rail:aBrakeUsage" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eTrainGroups">
+    <xs:sequence>
+      <xs:element name="trainGroup" type="rail:eTrainGroup" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eTrainGroup">
+    <xs:complexContent>
+      <xs:extension base="rail:tTrainGroup">
+        <xs:sequence>
+          <xs:element name="trainRef" type="rail:tTrainRef" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eRosterings">
+    <xs:sequence>
+      <xs:element name="rostering" type="rail:eRostering" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eRostering">
+    <xs:complexContent>
+      <xs:extension base="rail:tRostering">
+        <xs:sequence>
+          <xs:element name="blockParts" type="rail:eBlockParts" />
+          <xs:element name="blocks" type="rail:eBlocks" />
+          <xs:element name="circulations" type="rail:eCirculations" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eBlocks">
+    <xs:sequence>
+      <xs:element name="block" type="rail:eBlock" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eBlock">
+    <xs:complexContent>
+      <xs:extension base="rail:tBlock">
+        <xs:sequence>
+          <xs:element name="blockPartSequence" type="rail:eBlockPartSequence" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eBlockPartSequence">
+    <xs:complexContent>
+      <xs:extension base="rail:tBlockPartSequence">
+        <xs:sequence>
+          <xs:element name="blockPartRef" type="rail:tBlockPartRef" maxOccurs="unbounded" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="eBlockParts">
+    <xs:sequence>
+      <xs:element name="blockPart" type="rail:tBlockPart" maxOccurs="unbounded" />
+      <xs:any namespace="##other" processContents="strict" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="eCirculations">
+    <xs:sequence>
+      <xs:element name="circulation" type="rail:tCirculation" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

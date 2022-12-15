@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListTimeBlockTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <div id="filterControl" class="panel panel-default">
+                <div class="panel-body form-inline">
+                    <h:outputText value="#{bundle.Filter_Schedule}"></h:outputText>
+                    <h:selectOneMenu id="scheduleMenu" value="#{timeBlockController.schedule}" styleClass="form-control"  converter="#{scheduleConverter}">
+                        <f:selectItems value="#{timeBlockController.schedules}" var="schedule" itemLabel="#{schedule.description}" itemValue="#{schedule}"/>
+                        <p:ajax update="@form" process="@this" listener="#{timeBlockController.scheduleFilterChanged()}" />
+                    </h:selectOneMenu>
+                    <ui:remove>
+                        <h:selectOneMenu value="#{timeBlockController.filter.dayType}" styleClass="form-control"  converter="#{dayTypeConverter}">
+                            <f:selectItems value="#{timeBlockController.filter.schedule.valid ? timeBlockController.filter.schedule.dayTypes : null}" var="dayType" itemLabel="#{dayType.abbr}" itemValue="#{dayType}"/>
+                            <p:ajax update="@form" process="@this" listener="#{timeBlockController.dayTypeFilterChanged()}" />
+                        </h:selectOneMenu>
+                    </ui:remove>
+                </div>
+            </div>
+            
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages id="resultMessage" errorStyle="color: red" infoStyle="color: green" layout="table">
+                </h:messages>
+            </h:panelGroup>
+            
+            <h:panelGrid id="panelGrid1" columns="1" >
+                <h:commandLink id="addButton" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not timeBlockController.isAddAllowed()}">
+                    <p:ajax event="click" update="panelGroup1 @this" onevent="onAjaxUpdate" listener="#{timeBlockController.addNew}" />
+                </h:commandLink>
+            </h:panelGrid>
+            
+            <h:panelGroup id="panelGroup1">
+                <h:outputText value="#{timeBlockController.pagination.pageFirstItem + 1}..#{timeBlockController.pagination.pageLastItem + 1}/#{timeBlockController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink id="previousPageButton" action="#{timeBlockController.previous}" value="#{bundle.Previous} #{timeBlockController.pagination.pageSize}" rendered="#{timeBlockController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink id="nextPageButton" action="#{timeBlockController.next}" value="#{bundle.Next} #{timeBlockController.pagination.pageSize}" rendered="#{timeBlockController.pagination.hasNextPage}"/>&nbsp;
+                
+                <p:dataTable id="timeBlockList" value="#{timeBlockController.items}" var="item" tableStyle="width:auto" styleClass="table table-nonfluid table-striped table-hover">
+                    <ui:remove>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ViewTripTitle_SeqNo}"/>
+                            </f:facet>
+                            <h:panelGroup id="seqno">
+                                <h:outputText value="#{item.seqNo}"/>
+                            </h:panelGroup>
+                        </p:column>
+                    </ui:remove>
+                    
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduleTitle_description}"/>
+                        </f:facet>
+                        <h:panelGroup id="descriptionP">
+                            <h:outputText value="#{item.description}" rendered="#{not item.editing}"/>
+                            <h:inputText id="descriptionInput" value="#{item.description}" rendered="#{item.editing}" styleClass="form-control" required="true" requiredMessage="#{bundle.RequiredMessage_description}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_startTime}"/>
+                        </f:facet>
+                        <h:panelGroup id="starttimeP">
+                            <h:outputText value="#{item.startTime}" rendered="#{not item.editing}">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:outputText>
+                            <h:inputText id="startTimeInput" label="#{bundle.DateTime_Time}" styleClass="timePickerInput1 form-control" size="8" rendered="#{item.editing}" value="#{item.startTime}" required="true" requiredMessage="#{bundle.RequiredMessage_starttime}" onfocus="initTimePickerWithTime('#{languageBean.locale.displayLanguage}','#{item.startTime.hours}','#{item.startTime.minutes}','#{item.startTime.seconds}')">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:inputText>
+                        </h:panelGroup>
+                    </p:column>
+                    
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_endTime}"/>
+                        </f:facet>
+                        <h:panelGroup id="endtimeP">
+                            <h:outputText value="+#{item.endDay} #{bundle.day} " rendered="#{not item.editing and item.endDay>0}"></h:outputText>
+                            <h:outputText value="#{item.endTime}" rendered="#{not item.editing}">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:outputText> 
+                            <h:selectOneMenu id="endDayInput" class="form-control" rendered="#{item.editing}" value="#{item.endDay}">
+                                <f:selectItems value="#{timeBlockController.days}"></f:selectItems>
+                                <p:ajax process="@this" update="@this" />
+                            </h:selectOneMenu>
+                            <h:inputText id="endTimeInput" label="#{bundle.DateTime_Time}" styleClass="timePickerInput1 form-control" size="8" rendered="#{item.editing}" value="#{item.endTime}" required="true" requiredMessage="#{bundle.RequiredMessage_endtime}" onfocus="initTimePickerWithTime('#{languageBean.locale.displayLanguage}','#{item.endTime.hours}','#{item.endTime.minutes}','#{item.endTime.seconds}')">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:inputText>
+                        </h:panelGroup>
+                    </p:column>
+                    
+                    <p:column >
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.Filter_DayType}"/>
+                            <br/>
+                            <h:panelGroup>
+                                <h:selectOneMenu id="dayTypeMenu" value="#{timeBlockController.filter.dayType}" styleClass="form-control"  converter="#{dayTypeConverter}">
+                                    <f:selectItem itemLabel="#{timeBlockController.dayTypeAll.description}" itemValue="#{timeBlockController.dayTypeAll}"></f:selectItem>
+                                    <f:selectItems value="#{timeBlockController.schedule!=null? timeBlockController.schedule.dayTypes : null}" var="dayType" itemLabel="#{dayType.abbr}" itemValue="#{dayType}"/>
+                                    <p:ajax update="@form" process="@this" listener="#{timeBlockController.dayTypeFilterChanged()}" />
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </f:facet>
+
+                        <h:panelGroup id="dayTypeP">
+                            <h:outputText value="#{item.dayType.abbr}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu id="dayTypeInput" rendered="#{item.editing}" value="#{item.dayType}" class="form-control" converter="#{dayTypeConverter}" required="true" requiredMessage="#{bundle.RequiredMessage_daytype}">
+                                <f:selectItems value="#{timeBlockController.filter.schedule.dayTypes}" var="dayTypeItem" itemLabel="#{dayTypeItem.abbr}" itemValue="#{dayTypeItem}">
+                                </f:selectItems>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </p:column>
+                    
+                    <ui:remove>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTimeBlockTitle_Headway}"/>
+                            </f:facet>
+                            <h:panelGroup id="headwayP">
+                                <h:outputText value="#{item.headway}" rendered="#{not item.editing}"/>
+                                <h:inputText id="headwayInput" value="#{item.headway}" rendered="#{item.editing}" styleClass="form-control" required="true" requiredMessage="#{bundle.RequiredMessage_headway}" validatorMessage="#{bundle.ValidatorMessage_headway}" converterMessage="#{bundle.ConvertMessage_headway}">
+                                </h:inputText>
+                            </h:panelGroup>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTimeBlockTitle_NumberOfTrains}"/>
+                            </f:facet>
+                            <h:panelGroup id="nbrP">
+                                <h:outputText value="#{item.numberOfTrains}"/>
+                                <ui:remove>
+                                    <h:inputText id="numberOfTrainsInput" value="#{item.numberOfTrains}" rendered="#{item.editing}" styleClass="form-control" required="true" requiredMessage="#{bundle.RequiredMessage_nbrOfTrains}" validatorMessage="#{bundle.ValidatorMessage_nbrOfTrains}" converterMessage="#{bundle.ConvertMessage_nbrOfTrains}">
+                                    </h:inputText>
+                                </ui:remove>
+                            </h:panelGroup>
+                        </p:column>
+                    </ui:remove>
+                    
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTimeBlockTitle_SpeedProfile}"/>
+                        </f:facet>
+                        <h:panelGroup id="speedP">
+                            <h:outputText value="#{item.speedProfile}" rendered="#{not item.editing}"/>
+                            <h:inputText id="speedProfileInput" value="#{item.speedProfile}" maxlength="8" rendered="#{item.editing}" styleClass="form-control" requiredMessage="#{bundle.RequiredMessage_speedProfile}" validatorMessage="#{bundle.ValidatorMessage_speedProfile}" converterMessage="#{bundle.ConvertMessage_speedProfile}">
+                                <f:validateLongRange minimum="1"></f:validateLongRange>
+                            </h:inputText>
+                        </h:panelGroup>
+                    </p:column>
+                    
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:commandLink id="detail" styleClass="icon-search" title="#{bundle.Tooltip_View}" rendered="#{not item.editing}" action="#{timeBlockController.prepareView(item)}">
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="editButton" styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not item.editing}">
+                            <p:ajax event="click" process="@this descriptionP starttimeP endtimeP  dayTypeP speedP  nbrP" update=":form1:panelGroup1 :form1:messagePanel :form1:panelGrid1" onevent="onAjaxUpdate" listener="#{timeBlockController.activateEdit(item)}"/>
+                        </h:commandLink>
+                        <h:commandLink id="saveButton" styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{item.editing}">
+                            <p:ajax event="click" process="@this descriptionP starttimeP endtimeP dayTypeP speedP  nbrP" update=":form1:image1 :form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel" onevent="onAjaxUpdate" listener="#{timeBlockController.save(item)}"/>
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="cancelButton" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" immediate="true" rendered="#{item.editing and !item.creating}">
+                            <p:ajax event="click" update=":form1:panelGroup1 :form1:messagePanel :form1:panelGrid1" onevent="onAjaxUpdate" listener="#{timeBlockController.cancel(item)}"/>
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="deleteButton" immediate="true" title="#{bundle.Tooltip_Delete}" rendered="#{item.creating or not item.editing}" styleClass="icon-remove">
+                            <p:ajax event="click" update=":form1:panelGroup1 :form1:messagePanel :form1:panelGrid1" onevent="onAjaxUpdate" listener="#{timeBlockController.destroy(item)}"/>
+                        </h:commandLink>
+                    </p:column>
+                    
+                </p:dataTable>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+
+</html>

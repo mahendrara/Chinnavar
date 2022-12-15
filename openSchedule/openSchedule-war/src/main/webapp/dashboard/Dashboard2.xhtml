@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="Performance Dashboard"></h:outputText>
+        </ui:define>
+        <ui:define name="setting" >
+                
+            <p:commandButton id="settingBtn" value="Settings" styleClass="btn btn-default temp">
+                
+            </p:commandButton>
+        </ui:define>
+
+        <ui:define name="body">
+            <!--<div id="test" ></div>
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages id="message" errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>-->
+            <div class="row">
+                <div class="col-lg-12" id="dataDiv"></div>
+                <div class="col-lg-2" id="settingDiv" style="display:none" >
+                    <fieldset>
+                        <legend>View:</legend>
+                        <div><input type="radio" id="combinedView" name="view" value="1" checked ="true" ></input>Instant data and history data</div>
+                        <div><input type="radio" id="instantView" name="view" value="2"></input>Only instant data</div>
+                        <div><input type="radio" id="historyView" name="view" value="3" disabled = "true"></input>Only history data</div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Instant Data Presentation:</legend>
+                        <div><input type="radio" id="gauge" name="instantPres" value="1" checked ="true" ></input>Gauge</div>
+                        <div><input type="radio" id="simpleGauge" name="instantPres" value="2"></input>Simple gauge</div>
+                        <div><input type="radio" id="numericNum" name="instantPres" value="3"></input>Numeric number</div>
+                    </fieldset>
+
+                    <p>
+                        <button id = "submitSettingBtn" class="btn btn-default">Apply</button>
+                        <button id = "resetSettingBtn" class="btn btn-default">Reset</button>
+                    </p>
+                </div>
+            </div>
+
+            <script type="text/javascript" src="/openSchedule-war/resources/js/dashboard2.js"></script>
+            <script type="text/javascript" src="/openSchedule-war/resources/js/dashboard-common.js"></script>
+            <script type="text/javascript" src="/openSchedule-war/resources/js/dygraph-combined.js"></script>
+            <script type="text/javascript" src="/openSchedule-war/resources/js/gauge.js"></script>
+            <script>
+
+            </script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.MovementTemplateTitle} "></h:outputText>
+            <h:outputText value="#{movementTripTemplateController.selected.description}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <ui:param name="selectedItem" value="#{movementTripTemplateController.selected}" />
+            <p:panel id="panel1" style="border:none;">
+                <h:panelGrid  columns="2">
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_description}"/>
+                    <h:outputText value="#{selectedItem.description}" rendered="#{not selectedItem.editing}"/>
+                    <h:inputText value="#{selectedItem.description}" rendered="#{selectedItem.editing}"/>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_area}"/>
+                    <h:outputText value="#{selectedItem.areaObj.getText(languageBean.OSLocale)}" rendered="#{not selectedItem.editing}"/>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabe_plannedStartObj}"/>
+                    <h:outputText value="#{selectedItem.plannedStartObj.getText(languageBean.OSLocale)}"/>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabe_plannedStopObj}"/>
+                    <h:outputText value="#{selectedItem.plannedStopObj.getText(languageBean.OSLocale)}"/>
+                    <ui:remove>
+                        <h:outputText value="#{bundle.ViewPlannedServiceLabel_duration}"/>
+                        <h:outputText id="duration" value="#{selectedItem.duration}"/>
+
+                        <h:outputText value="#{bundle.ViewPlannedServiceLabel_origoSecs}"/>
+                        <h:outputText value="#{selectedItem.origo}"/>
+                    </ui:remove>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_numberOfActions}"/>
+                    <h:outputText value="#{selectedItem.tripActions.size()}"/>
+                </h:panelGrid>
+            </p:panel>
+            <h:panelGroup id="messagePanel1" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <p:tabView id="tabView1" dynamic="true" cache="false">
+                <p:tab id="tab1" title="#{bundle.MovementTemplateTitle_TripActions}">
+                    <h:panelGrid id="panelGrid1" columns="4">
+                        <h:outputText value="#{bundle.ViewTripLabel_action}"/>
+                        <h:selectOneMenu id="mainActionTypes" value="#{movementTripTemplateController.selectedMainActionType}" class="form-control" converter="#{mainActionTypeConverter}">
+                            <f:selectItems value="#{movementTripTemplateController.mainActionTypes}" var="mainActionType" itemLabel="#{mainActionType.getText(languageBean.OSLocale)}" itemValue="#{mainActionType}">
+                            </f:selectItems>
+                            <p:ajax update="actionTypes" process="@this" listener="#{movementTripTemplateController.selectedMainActionTypeChanged}" />
+                        </h:selectOneMenu>
+                        <h:selectOneMenu id="actionTypes" value="#{movementTripTemplateController.selectedActionType}" class="form-control" converter="#{actionTypeConverter}">
+                            <f:selectItems value="#{movementTripTemplateController.actionTypes}" var="actionType" itemLabel="#{actionType.getText(languageBean.OSLocale)}" itemValue="#{actionType}">
+                            </f:selectItems>
+                            <p:ajax process="@this" listener="#{movementTripTemplateController.selectedActionTypeChanged}" />
+                        </h:selectOneMenu>
+                        <h:commandLink id="addNew" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not movementTripTemplateController.addTripActionAllowed}">
+                            <p:ajax listener="#{movementTripTemplateController.addNewTripAction}" update="addact @this" onevent="onAjaxUpdate" />
+                        </h:commandLink>
+                    </h:panelGrid>
+                    <br />
+                    <h:dataTable id="addact" value="#{movementTripTemplateController.selected.tripActions}" var="tripActionItem" styleClass="table table-nonfluid table-striped table-bordered table-hover" rules="all" >
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ViewTripTitle_SeqNo}"/>
+                            </f:facet>
+                            <h:panelGroup id="seqnoP">
+                                <h:outputText value="#{tripActionItem.seqNo}" rendered="#{not tripActionItem.editing}"/>
+                                <h:selectOneMenu rendered="#{tripActionItem.editing}" class="form-control" value="#{tripActionItem.seqNo}">
+                                    <f:selectItems var="seqno" value="#{movementTripTemplateController.getPossibleSeqNos(selectedItem, tripActionItem)}"/>
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ViewTripTitle_routeObject}"/>
+                            </f:facet>
+
+                            <h:panelGroup id="routeObjP" >
+                                <h:outputText value="#{tripActionItem.routeObject.getText(languageBean.OSLocale)}" rendered="#{not tripActionItem.editing}"/>
+                                <h:selectOneMenu rendered="#{tripActionItem.editing}" class="form-control" value="#{tripActionItem.routeObject}" converter="#{TTObjectConverter}">
+                                    <f:selectItems var="location" value="#{movementTripTemplateController.getPossibleRouteObjects(tripActionItem)}" itemLabel="#{location.getText(languageBean.OSLocale)}" itemValue="#{location}"/>
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ViewTripTitle_action}"/>
+                            </f:facet>
+
+                            <h:panelGroup id="descriptionP" >
+                                <h:outputText value="#{tripActionItem.actionType.getText(languageBean.OSLocale)}"/>
+                            </h:panelGroup>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ViewTripTitle_obj}"/>
+                            </f:facet>
+                            <h:panelGroup id="timetableObj1P" >
+                                <h:outputText value="#{tripActionItem.timetableObject.getText(languageBean.OSLocale)}" rendered="#{not tripActionItem.editing}"  />
+                                <h:selectOneMenu rendered="#{tripActionItem.editing}" class="form-control" value="#{movementTripTemplateController.selectedActionTTObjectType1}" converter="#{TTObjectTypeConverter}">
+                                    <f:selectItems var="objtype" value="#{movementTripTemplateController.possibleActionTTObjectTypes}" itemLabel="#{objtype.getText(languageBean.OSLocale)}" itemValue="#{objtype}"/>
+                                    <p:ajax update="possibleLocations1" process="@this" />
+                                </h:selectOneMenu>
+                                <h:selectOneMenu id="possibleLocations1" rendered="#{tripActionItem.editing}" class="form-control" value="#{tripActionItem.timetableObject}" converter="#{TTObjectConverter}">
+                                    <f:selectItems var="location" value="#{movementTripTemplateController.possibleActionLocations1}" itemLabel="#{location.getText(languageBean.OSLocale)}" itemValue="#{location}"/>
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ViewMovementTemplate_plannedSecs}"/>
+                                <br />
+                                <h:outputText value="#{bundle.ViewMovementTemplate_AheadOfTripStart}"/>
+                            </f:facet>
+                            <h:panelGroup id="plannedSecsP">
+                                <h:panelGroup rendered="#{not tripActionItem.editing}">
+                                    <h:outputText value="-" rendered="#{tripActionItem.plannedSecs lt 0}"/>
+                                    <h:outputText value="+" rendered="#{tripActionItem.plannedSecs gt 0}"/>
+                                    <h:outputText value="#{tripActionItem.plannedDuration}">
+                                        <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                                    </h:outputText>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{tripActionItem.editing}">
+                                    <h:selectOneMenu class="form-control" value="#{tripActionItem.signOfPlannedSecs}">
+                                        <f:selectItems value="#{movementTripTemplateController.signs}"></f:selectItems>
+                                    </h:selectOneMenu>
+                                    <h:inputText label="#{bundle.DateTime_Time}" styleClass="timePickerInput1 form-control"  value="#{tripActionItem.plannedDuration}" required="true" requiredMessage="#{bundle.RequiredMessage_duration}" onfocus="initTimePicker('#{languageBean.locale.displayLanguage}')">
+                                        <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                                    </h:inputText>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ViewMovementTemplate_minSecs}"/>
+                                <br />
+                                <h:outputText value="#{bundle.ViewMovementTemplate_AheadOfTripStart}"/>
+                            </f:facet>
+                            <h:panelGroup id="minSecsP">
+                                <ui:remove>
+                                    <h:outputText value="#{tripActionItem.minDuration}" rendered="#{not tripActionItem.editing}">
+                                    </h:outputText>
+                                    <h:inputText value="#{tripActionItem.minDuration}" styleClass="form-control" rendered="#{tripActionItem.editing}"/>
+                                </ui:remove>
+                                <h:outputText value="+#{tripActionItem.dayForMinDuration} #{bundle.day} " rendered="#{tripActionItem.dayForMinDuration>0}"></h:outputText>
+                                <h:outputText value="#{tripActionItem.timeForMinDuration}"/>
+                            </h:panelGroup>
+                        </h:column>
+                        <ui:remove>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.ViewTripTitle_total}"/>
+                                </f:facet>
+                                <h:outputText id="timeP" value="#{tripActionItem.timeFromTripStartStr}" rendered="#{not tripActionItem.creating}">
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.ViewTripTitle_totalMin}"/>
+                                </f:facet>
+                                <h:outputText id="minTimeP" value="#{tripActionItem.minTimeFromTripStartStr}">
+                                </h:outputText>
+                            </h:column>
+                        </ui:remove>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="&nbsp;"/>
+                            </f:facet>
+                            <h:panelGroup id="commandLinks">
+                                <h:commandLink styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not tripActionItem.editing}">
+                                    <p:ajax event="click" update=":form1:tabView1:panelGrid1 addact:seqnoP addact:descriptionP addact:timetableObj1P addact:routeObjP addact:plannedSecsP addact:minSecsP addact:commandLinks" listener="#{movementTripTemplateController.activateEditTripAction(tripActionItem)}" onevent="onAjaxUpdate" />
+                                </h:commandLink>
+                                <h:commandLink styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{tripActionItem.editing}">
+                                    <p:ajax event="click" process="@this addact:seqnoP addact:descriptionP addact:timetableObj1P addact:routeObjP addact:plannedSecsP addact:minSecsP"
+                                            update=":form1:messagePanel1 :form1:panel1 :form1:tabView1" listener="#{movementTripTemplateController.saveTripAction(tripActionItem)}" onevent="onAjaxUpdate" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink immediate="true" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" rendered="#{tripActionItem.editing and !tripActionItem.creating}">
+                                    <p:ajax event="click" update=":form1:tabView1:addNew addact:seqnoP addact:descriptionP addact:timetableObj1P addact:routeObjP addact:plannedSecsP addact:minSecsP addact:commandLinks" onevent="onAjaxUpdate" listener="#{movementTripTemplateController.cancelTripAction(tripActionItem)}" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" immediate="true" rendered="#{tripActionItem.creating or not tripActionItem.editing}">
+                                    <p:ajax event="click" update=":form1:messagePanel1 :form1:panel1 :form1:tabView1" onevent="onAjaxUpdate" listener="#{movementTripTemplateController.destroyTripAction(tripActionItem)}"/>
+                                </h:commandLink>
+                            </h:panelGroup>
+                        </h:column>
+                    </h:dataTable>
+                </p:tab>
+                <p:tab title="#{bundle.MovementTemplate_UsedBy}" rendered="false">
+                    <p:dataTable value="#{movementTripTemplateController.tripTemplatesForSelected}" var="tripItem" tableStyle="width:auto" styleClass="table table-nonfluid table-striped table-hover">
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTripTitle_serviceDescription}"/>
+                            </f:facet>
+                            <h:outputText value="#{tripItem.serviceAction.trip.description}" rendered="#{not tripItem.editing}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTripTitle_date}"/>
+                            </f:facet>
+                            <h:outputText value="#{movementTripTemplateController.getDate(tripItem)}" rendered="#{not tripItem.editing}">
+                                <f:convertDateTime type="date" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTripTitle_tripDescription}"/>
+                            </f:facet>
+                            <h:outputText value="#{tripItem.description}" rendered="#{not tripItem.editing}"/>
+                        </p:column>
+
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTripTitle_triptype}"/>
+                            </f:facet>
+                            <h:outputText value="#{tripItem.tripType.getText(languageBean.OSLocale)}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListScheduledServiceTitle_plannedStartObj}"/>
+                            </f:facet>
+                            <h:outputText value="#{tripItem.plannedStartObj.getText(languageBean.OSLocale)}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListScheduledServiceTitle_plannedStopObj}"/>
+                            </f:facet>
+                            <h:outputText value="#{tripItem.plannedStopObj.getText(languageBean.OSLocale)}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListScheduledServiceTitle_startTime}"/>
+                            </f:facet>
+                            <h:outputText value="#{tripItem.plannedStartTime}">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListScheduledServiceTitle_endTime}"/>
+                            </f:facet>
+                            <h:outputText value="#{tripItem.plannedStopTime}">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListScheduledServiceTitle_duration}"/>
+                            </f:facet>
+                            <h:outputText value="#{tripItem.duration}">
+                            </h:outputText>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListPlannedServiceTitle_numberOfActions}"/>
+                            </f:facet>
+                            <h:outputText value="#{tripItem.numberOfActions}"/>
+                        </p:column>
+
+                        <p:column rendered="false">
+                            <f:facet name="header">
+                                <h:outputText value="ATR control"/>
+                            </f:facet>
+                            <h:outputText value="#{tripItem.regStart}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+                <p:tab rendered="false" title="#{bundle.ViewTripTitle_TrainGraph}">
+                    <p:graphicImage id="tripChart" value="#{movementTripTemplateController.trainGraph}" cache="false"/>
+                </p:tab>
+            </p:tabView>
+        </ui:define>
+    </ui:composition>
+
+</html>

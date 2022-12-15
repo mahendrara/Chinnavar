@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewPlannedTripTitle}"></h:outputText>
+            <h:outputText value="#{plannedTripController.selected.description}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form >
+                <h:panelGrid columns="2">
+                    <h:outputText value="#{bundle.ViewPlannedTripLabel_consumed}"/>
+                    <h:outputText value="#{plannedTripController.selected.consumed}" title="#{bundle.ViewPlannedTripTitle_consumed}"/>
+                </h:panelGrid>
+                <h:panelGrid columns="8">
+                    <h:outputText value="#{bundle.ViewPlannedTripLabel_utctimes}"/>
+                    <h:outputText value="#{plannedTripController.selected.utcTimes}" title="#{bundle.ViewPlannedTripTitle_utctimes}"/>
+                    <h:outputText value="#{bundle.ViewPlannedTripLabel_starttime}"/>
+                    <h:outputText value="#{plannedTripController.selected.startTime}" title="#{bundle.ViewPlannedTripTitle_starttime}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                    </h:outputText>
+                    <h:outputText value="#{bundle.ViewPlannedTripLabel_endtime}"/>
+                    <h:outputText value="#{plannedTripController.selected.endTime}" title="#{bundle.ViewPlannedTripTitle_endtime}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+                    </h:outputText>
+                    <h:outputText value="#{bundle.ViewPlannedTripLabel_timesarevalid}"/>
+                    <h:outputText value="#{plannedTripController.selected.timesAreValid}" title="#{bundle.ViewPlannedTripTitle_timesarevalid}"/>
+                </h:panelGrid>
+                <h:panelGrid columns="4">
+                    <h:outputText value="#{bundle.ViewPlannedTripLabel_tripid}"/>
+                    <h:outputText value="#{plannedTripController.selected.tripId}" title="#{bundle.ViewPlannedTripTitle_tripid}"/>
+                    <h:outputText value="#{bundle.ViewPlannedTripLabel_triptype}"/>
+                    <h:outputText value="#{plannedTripController.selected.tripType.description}" title="#{bundle.ViewPlannedTripTitle_triptype}"/>
+                </h:panelGrid>
+                <br />
+                <h:commandButton class="btn btn-default" action="#{plannedTripController.destroyAndView}" value="#{bundle.ViewPlannedTripDestroyLink}"/>
+                <h:commandButton class="btn btn-default" action="Edit" value="#{bundle.ViewPlannedTripEditLink}"/>
+                <h:commandButton class="btn btn-default" action="#{plannedTripController.prepareCreate}" value="#{bundle.ViewPlannedTripCreateLink}" />
+                <br />
+                <h:commandButton class="btn btn-default" action="#{plannedTripController.prepareList}" value="#{bundle.ViewPlannedTripShowAllLink}"/>
+                <h:commandButton class="btn btn-default" action="#{plannedTripController.backToDetailsView}" value="todo Back to Details"/>
+                <br />
+                <h:outputText value="(Debug) Actions are from TripTemplate ID : "/>
+                <h:outputText value="#{plannedTripController.selected.tripTemplateID}"/>
+                <h:dataTable rendered="false" value="#{plannedTripController.selected.tripActions}" var="item" styleClass="table-nonfluid table-striped table-bordered table-hover" rules="all" >
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="Start hour"/>
+                        </f:facet>
+                        <h:outputText value="#{plannedTripController.CalcActionStartHourString(item)}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="Stop hour"/>
+                        </f:facet>
+                        <h:outputText value="#{plannedTripController.CalcActionEndHourString(item)}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="Segno"/>
+                        </f:facet>
+                        <h:outputText value="#{item.seqno}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="Timetable action"/>
+                        </f:facet>
+                        <h:outputText value="#{item.actionType.description}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="Timetable Object"/>
+                        </f:facet>
+                        <h:outputText value="#{item.mainObjectName}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="Planned seconds"/>
+                        </f:facet>
+                        <h:outputText value="#{item.plannedSecs}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="Min seconds"/>
+                        </f:facet>
+                        <h:outputText value="#{item.minSecs}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="From trip start"/>
+                        </f:facet>
+                        <h:outputText value="#{item.timeFromTripStart}"/>
+                    </h:column>
+                </h:dataTable>
+            </h:form>
+            <p:graphicImage value="#{plannedTripController.trainGraph}"/>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!-- $Id$ -->
+<xs:schema xmlns:rail="http://www.railml.org/schemas/2011" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://www.railml.org/schemas/2011" elementFormDefault="qualified" version="2.1">
+
+  <xs:annotation>
+    <xs:documentation>Copyright (c) railML.org; All Rights Reserved.</xs:documentation>
+    <xs:documentation>This work is licensed under a Creative Commons Attribution 2.0 License. http://creativecommons.org/licenses/by/2.0/</xs:documentation>
+    <xs:documentation>For further information see: http://www.railml.org/</xs:documentation>
+    <xs:documentation>Content of this file: XML Schema for railML(R) 2.0 Definition of attribute groups, simple and complex types, used by timetable sub schema (TT)</xs:documentation>
+  </xs:annotation>
+
+  <xs:include schemaLocation="railwayUnits.xsd" />
+  <xs:include schemaLocation="railwayBaseTypes.xsd" />
+
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/03/xml.xsd" />
+
+  <xs:complexType name="tTimetable">
+    <xs:complexContent>
+      <xs:extension base="rail:tGlobalElementWithMetadata">
+        <xs:attributeGroup ref="rail:aTimetable" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aTimetable">
+    <xs:attribute name="infrastructureRef" type="rail:tGenericRef" />
+    <xs:attribute name="rollingstockRef" type="rail:tGenericRef" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tOperatingPeriod">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithIDAndName">
+        <xs:attributeGroup ref="rail:aOperatingPeriod" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aOperatingPeriod">
+    <xs:attribute name="timetablePeriodRef" type="rail:tGenericRef" />
+    <xs:attributeGroup ref="rail:aServicePeriod" />
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="aServicePeriod">
+    <xs:attributeGroup ref="rail:aTimePeriod" />
+    <xs:attribute name="bitMask" type="rail:tBitMask" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tSpecialService">
+    <xs:attributeGroup ref="rail:aSpecialService" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aSpecialService">
+    <xs:attribute name="type" type="rail:tSpecialServiceType" use="required" />
+    <xs:attribute name="singleDate" type="xs:date" />
+    <xs:attributeGroup ref="rail:aTimePeriod" />
+    <xs:attributeGroup ref="rail:aPeriodTimeSpan" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tOperatingDay">
+    <xs:attributeGroup ref="rail:aOperatingCode" />
+    <xs:attributeGroup ref="rail:aTimePeriod" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aOperatingCode">
+    <xs:attribute name="operatingCode" type="rail:tOperatingCode" use="required" />
+    <xs:attribute name="onRequest" type="xs:boolean">
+      <xs:annotation>
+        <xs:documentation>needed for "runs Monday to Friday and additionally Sunday on request"</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:complexType name="tOperatingDayDeviance">
+    <xs:attributeGroup ref="rail:aOperatingCode" />
+    <xs:attributeGroup ref="rail:aOperatingDayDeviance" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aOperatingDayDeviance">
+    <xs:attribute name="holidayOffset" type="xs:integer" use="required" />
+    <xs:attribute name="ranking" type="rail:tPositiveCounter" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tHoliday">
+    <xs:attributeGroup ref="rail:aHoliday" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aHoliday">
+    <xs:attribute name="holidayDate" type="xs:date" use="required" />
+    <xs:attribute name="description" type="rail:tElementDescription" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tTimetablePeriod">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithIDAndName">
+        <xs:attributeGroup ref="rail:aTimetablePeriod" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aTimetablePeriod">
+    <xs:attributeGroup ref="rail:aTimePeriod" />
+    <xs:attributeGroup ref="rail:aPeriodTimeSpan" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tFormationTT">
+    <xs:attributeGroup ref="rail:aFormationTT" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aFormationTT">
+    <xs:attribute name="formationRef" type="rail:tGenericRef" />
+    <xs:attribute name="weight" type="rail:tWeightTons" />
+    <xs:attribute name="load" type="rail:tWeightTons">
+      <xs:annotation>
+        <xs:documentation>weight without engine</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="length" type="rail:tLengthM" />
+    <xs:attribute name="speed" type="rail:tSpeedKmPerHour" />
+    <xs:attribute name="timetableLoad" type="rail:tWeightTons">
+      <xs:annotation>
+        <xs:documentation>assumed load (without engine) for timetable planning</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attributeGroup ref="rail:anyAttribute" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tEquipment">
+    <xs:attributeGroup ref="rail:aEquipment" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aEquipment">
+    <xs:attribute name="type" type="rail:tNationalSystemsType" />
+    <xs:attribute name="uses" type="xs:boolean" />
+    <xs:attribute name="description" type="xs:string" />
+    <xs:attributeGroup ref="rail:anyAttribute" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tBrakeUsage">
+    <xs:attributeGroup ref="rail:aBrakeUsage" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aBrakeUsage">
+    <xs:attribute name="brakePercentage" type="rail:tBrakePercentage" />
+    <xs:attribute name="regularBrakePercentage" type="rail:tBrakePercentage">
+      <xs:annotation>
+        <xs:documentation>to be used instead of the uncertain "brakePercentage" as specific value for the regular case"</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="emergencyBrakePercentage" type="rail:tBrakePercentage">
+      <xs:annotation>
+        <xs:documentation>to be used instead of the uncertain "brakePercentage" as specific value for the emergency case"</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attributeGroup ref="rail:anyAttribute" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tBooking">
+    <xs:attributeGroup ref="rail:aBooking" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aBooking">
+    <xs:attribute name="bookingNumber" type="rail:tGenericName" use="required" />
+    <xs:attribute name="posInFormation" type="rail:tPositiveCounter">
+      <xs:annotation>
+        <xs:documentation>needed as reference, if the same vehicle is referenced several times inside a formation</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="vehicleRef" type="rail:tGenericRef" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tCategory">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithIDAndName">
+        <xs:attributeGroup ref="rail:aCategory" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aCategory">
+    <xs:attribute name="trainUsage" type="rail:tUsageType" />
+    <xs:attribute name="deadrun" type="xs:boolean" />
+    <xs:attribute name="categoryPriority" type="xs:string" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tTrainPart">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithIDAndName">
+        <xs:attributeGroup ref="rail:aTrainPart" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aTrainPart">
+    <xs:attribute name="line" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>the "train part line", which could be different from the "train line"</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="trainLine" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>DEPRECATED: the "train line" is located at the train and not to be mixed with a "train part line"</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="trainNumber" type="xs:string" />
+    <xs:attribute name="additionalTrainNumber" type="xs:string" />
+    <xs:attribute name="processStatus" type="rail:tProcessStatus" />
+    <xs:attribute name="debitcode" type="xs:integer" />
+    <xs:attribute name="remarks" type="xs:string" />
+    <xs:attribute name="timetablePeriodRef" type="rail:tGenericRef" />
+    <xs:attribute name="categoryRef" type="rail:tGenericRef" />
+    <xs:attribute name="operator" type="xs:string" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tTrain">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithIDAndName">
+        <xs:attributeGroup ref="rail:aTrain" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aTrain">
+    <xs:attribute name="type" type="rail:tTrainType" use="required" />
+    <xs:attribute name="trainNumber" type="xs:string" />
+    <xs:attribute name="additionalTrainNumber" type="xs:string" />
+    <xs:attribute name="scope" type="rail:tTrainScope" />
+    <xs:attribute name="processStatus" type="rail:tProcessStatus" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tTrainGroup">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithIDAndName">
+        <xs:attributeGroup ref="rail:aTrainGroup" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aTrainGroup">
+    <xs:attribute name="type" type="rail:tTrainGroupType" />
+    <xs:attribute name="trainNumber" type="xs:string" />
+    <xs:attribute name="processStatus" type="rail:tProcessStatus" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tTrainRef">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithReference">
+        <xs:attributeGroup ref="rail:aTrainRef" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aTrainRef">
+    <xs:attribute name="sequence" type="rail:tPositiveCounter" use="required" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tTrainPartSequence">
+    <xs:attributeGroup ref="rail:aTrainPartSequence" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aTrainPartSequence">
+    <xs:attribute name="sequence" type="rail:tPositiveCounter" use="required" />
+    <xs:attribute name="pathStatus" type="rail:tPathStatus" />
+    <xs:attribute name="categoryRef" type="rail:tGenericRef">
+      <xs:annotation>
+        <xs:documentation>the category of a train which could differ (by its meaning) from a train part category</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attributeGroup ref="rail:anyAttribute" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tTrainPartRef">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithReference">
+        <xs:attributeGroup ref="rail:aTrainPartRef" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aTrainPartRef">
+    <xs:attribute name="position" type="rail:tPositiveCounter" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tOperatingPeriodRef">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithReference">
+        <xs:attributeGroup ref="rail:aOperatingPeriodRef" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aOperatingPeriodRef">
+    <xs:attributeGroup ref="rail:aTimePeriod" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tOcpTT">
+    <xs:attributeGroup ref="rail:aOcpTT" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aOcpTT">
+    <xs:attribute name="ocpRef" type="rail:tGenericRef" use="required" />
+    <xs:attribute name="trackRef" type="rail:tGenericRef" />
+    <xs:attribute name="trackInfo" type="xs:string" />
+    <xs:attribute name="ocpType" type="rail:tOcpTTType" />
+    <xs:attribute name="remarks" type="xs:string" />
+    <xs:attribute name="trainReverse" type="xs:boolean" />
+    <xs:attribute name="alignment" type="rail:tTrainAlignment" />
+    <xs:attribute name="offset" type="rail:tLengthM" />
+    <xs:attribute name="shuntingTime" type="xs:duration" />
+    <xs:attributeGroup ref="rail:anyAttribute" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tArrivalDepartureTimes">
+    <xs:attributeGroup ref="rail:aTimesScope" />
+    <xs:attributeGroup ref="rail:aArrivalDepartureTimes" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aArrivalDepartureTimes">
+    <xs:attribute name="arrival" type="xs:time" />
+    <xs:attribute name="arrivalDay" type="xs:integer" />
+    <xs:attribute name="departure" type="xs:time" />
+    <xs:attribute name="departureDay" type="xs:integer" />
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="aTimesScope">
+    <xs:attribute name="scope" type="rail:tTimeScope" use="required" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tStopTimes">
+    <xs:attributeGroup ref="rail:aStopTimes" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aStopTimes">
+    <xs:attribute name="minimalTime" type="xs:duration" />
+    <xs:attribute name="operationalReserve" type="xs:duration" />
+    <xs:attribute name="additionalReserve" type="xs:duration" />
+    <xs:attribute name="shuntingTime" type="xs:duration" />
+    <xs:attribute name="clearanceTime" type="xs:duration" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tConnectionTT">
+    <xs:attributeGroup ref="rail:aConnectionTT" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aConnectionTT">
+    <xs:attribute name="trainRef" type="rail:tGenericRef" use="required" />
+    <xs:attribute name="minConnTime" type="xs:duration" />
+    <xs:attribute name="maxConnTime" type="xs:duration" />
+    <xs:attribute name="connOperation" type="rail:tConnOperation" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tStatistic">
+    <xs:attributeGroup ref="rail:aStatistic" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aStatistic" />
+
+  <xs:complexType name="tStatisticTimes">
+    <xs:attributeGroup ref="rail:aArrivalDepartureTimes" />
+    <xs:attributeGroup ref="rail:aArrivalDepartureDelay" />
+    <xs:attribute name="stopTime" type="xs:duration" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aArrivalDepartureDelay">
+    <xs:attribute name="arrivalDelay" type="xs:duration" />
+    <xs:attribute name="departureDelay" type="xs:duration" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tStandardDeviationTimes">
+    <xs:attributeGroup ref="rail:aArrivalDepartureDelay" />
+  </xs:complexType>
+
+  <xs:complexType name="tStatisticAnalyses">
+    <xs:attributeGroup ref="rail:aStatisticAnalyses" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aStatisticAnalyses">
+    <xs:attribute name="description" type="xs:string" />
+    <xs:attribute name="percentage" type="xs:decimal" />
+    <xs:attribute name="value" type="xs:duration" />
+    <xs:attribute name="figure" type="rail:tStatisticFigure" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tSectionTT">
+    <xs:attributeGroup ref="rail:aSectionTT" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aSectionTT">
+    <xs:attribute name="section" type="xs:string" />
+    <xs:attribute name="lineRef" type="rail:tGenericRef" />
+    <xs:attribute name="trackInfo" type="xs:string" />
+    <xs:attribute name="description" type="rail:tElementDescription" />
+    <xs:attribute name="remarks" type="xs:string" />
+    <xs:attribute name="percentageSupplement" type="xs:decimal" />
+    <xs:attribute name="distance" type="rail:tLengthM" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tTrackRef">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithReference">
+        <xs:attribute name="dir" type="rail:tLaxDirection">
+          <xs:annotation>
+            <xs:documentation>driving direction in relation to track definition direction</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="tRunTimes">
+    <xs:attributeGroup ref="rail:aRunTimes" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aRunTimes">
+    <xs:attribute name="minimalTime" type="xs:duration" />
+    <xs:attribute name="operationalReserve" type="xs:duration" />
+    <xs:attribute name="additionalReserve" type="xs:duration" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tStopDescription">
+    <xs:attributeGroup ref="rail:aStopDescription" />
+    <xs:attributeGroup ref="rail:anyAttribute" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aStopDescription">
+    <xs:attribute name="commercial" type="xs:boolean" />
+    <xs:attribute name="stopOnRequest" type="xs:boolean" />
+    <xs:attribute name="onOff" type="rail:tOnOff" />
+    <xs:attribute name="purpose" type="xs:string" />
+    <xs:attribute name="operatingPeriodRef" type="rail:tGenericRef" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tRostering">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithIDAndName">
+        <xs:attributeGroup ref="rail:aRostering" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aRostering">
+    <xs:attribute name="vehicleRef" type="rail:tGenericRef">
+      <xs:annotation>
+        <xs:documentation>default vehicle, normally identical for all blockParts; can be superset by a certain blockPart</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="formationRef" type="rail:tGenericRef">
+      <xs:annotation>
+        <xs:documentation>default formation, normally identical for all blockParts; can be superset by a certain blockPart</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="depot" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>depot or location this rostering belongs to</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="defaultPreProcessingTime" type="xs:duration">
+      <xs:annotation>
+        <xs:documentation>default duration from the beginning of blocking of the ressource until start of blockPart</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="defaultPostProcessingTime" type="xs:duration">
+      <xs:annotation>
+        <xs:documentation>default duration from the end of blockPart until the end of blocking of the ressource</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="scope" type="rail:tRosteringScope">
+      <xs:annotation>
+        <xs:documentation>could be "conceptional" or "operational", or in case of timetable constraints for trainParts also "timetable"</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:complexType name="tBlock">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithIDAndName">
+        <xs:attributeGroup ref="rail:aBlock" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aBlock">
+    <xs:attribute name="blockGroupNumber" type="xs:string" />
+    <xs:attribute name="fixed" type="xs:boolean" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tBlockPartSequence">
+    <xs:attributeGroup ref="rail:aBlockPartSequence" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aBlockPartSequence">
+    <xs:attribute name="sequence" type="rail:tPositiveCounter" use="required" />
+    <xs:attribute name="dayOffset" type="rail:tCounter">
+      <xs:annotation>
+        <xs:documentation>defines the day the blockPart starts if the block runs over midnight (even if it is not longer than 24 hours); first day and default value is 0</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="preProcessingTime" type="xs:duration">
+      <xs:annotation>
+        <xs:documentation>duration from the beginning of blocking of the ressource until start of blockPart</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="postProcessingTime" type="xs:duration">
+      <xs:annotation>
+        <xs:documentation>duration from the end of blockPart until the end of blocking of the ressource</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="basicBlockRef" type="rail:tGenericRef" />
+    <xs:attributeGroup ref="rail:anyAttribute" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tBlockPartRef">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithReference" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="tBlockPart">
+    <xs:complexContent>
+      <xs:extension base="rail:tElementWithIDAndName">
+        <xs:attributeGroup ref="rail:aBlockPart" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:attributeGroup name="aBlockPart">
+    <xs:attribute name="begin" type="xs:time" />
+    <xs:attribute name="beginDay" type="xs:integer" />
+    <xs:attribute name="end" type="xs:time" />
+    <xs:attribute name="endDay" type="xs:integer" />
+    <xs:attribute name="startOcpRef" type="rail:tGenericRef" />
+    <xs:attribute name="endOcpRef" type="rail:tGenericRef" />
+    <xs:attribute name="trainPartRef" type="rail:tGenericRef" />
+    <xs:attribute name="operatingPeriodRef" type="rail:tGenericRef" />
+    <xs:attribute name="mission" type="rail:tMission" />
+    <xs:attribute name="fixed" type="xs:boolean" />
+    <xs:attribute name="runLength" type="rail:tLengthKM" />
+    <xs:attribute name="vehicleRef" type="rail:tGenericRef" />
+    <xs:attribute name="formationRef" type="rail:tGenericRef" />
+  </xs:attributeGroup>
+
+  <xs:complexType name="tCirculation">
+    <xs:attributeGroup ref="rail:aCirculation" />
+  </xs:complexType>
+
+  <xs:attributeGroup name="aCirculation">
+    <xs:attribute name="blockRef" type="rail:tGenericRef" use="required" />
+    <xs:attribute name="startDate" type="xs:date">
+      <xs:annotation>
+        <xs:documentation>if not defined: operatingPeriodRef must be defined</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="endDate" type="xs:date">
+      <xs:annotation>
+        <xs:documentation>if not defined: as operatingPeriod or open end</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="operatingPeriodRef" type="rail:tGenericRef">
+      <xs:annotation>
+        <xs:documentation>if not defined: daily from startDate to endDate</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="repeatCount" type="rail:tCounter">
+      <xs:annotation>
+        <xs:documentation>for abstract circulations without start/endDate</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="nextBlockRef" type="rail:tGenericRef" />
+    <xs:attribute name="nextOperatingPeriodRef" type="rail:tGenericRef">
+      <xs:annotation>
+        <xs:documentation>there has to be an information to which operation day of the next block the current block should be linked to. A vehicle can make a standstill for serveral days but the defined next block inside of the cirulation may run every day</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:simpleType name="tUsageType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="passenger" />
+      <xs:enumeration value="goods" />
+      <xs:enumeration value="mixed" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tMission">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="timetable" />
+          <xs:enumeration value="fullRun" />
+          <xs:enumeration value="emptyRun" />
+          <xs:enumeration value="outOfOrder" />
+          <xs:enumeration value="fillIn" />
+          <xs:enumeration value="preheating" />
+          <xs:enumeration value="refuel" />
+          <xs:enumeration value="shunting" />
+          <xs:enumeration value="depotrun" />
+          <xs:enumeration value="standBy" />
+          <xs:enumeration value="cleaning" />
+          <xs:enumeration value="maintenance" />
+          <xs:enumeration value="inspection" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="tPathStatus">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="planned" />
+          <xs:enumeration value="ordered" />
+          <xs:enumeration value="confirmed" />
+          <xs:enumeration value="detailsRefused" />
+          <xs:enumeration value="cancelled" />
+          <xs:enumeration value="notAvailable" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="tProcessStatus">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="planned" />
+          <xs:enumeration value="actual" />
+          <xs:enumeration value="calculated" />
+          <xs:enumeration value="toBeChecked" />
+          <xs:enumeration value="changed" />
+          <xs:enumeration value="imported" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="tBitMask">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-1]*" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tOperatingCode">
+    <xs:restriction base="xs:string">
+      <xs:length value="7" />
+      <xs:pattern value="[0-1]{7}" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tTrainScope">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="primary" />
+      <xs:enumeration value="secondary" />
+      <xs:enumeration value="secondaryStart" />
+      <xs:enumeration value="secondaryEnd" />
+      <xs:enumeration value="secondaryInner" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tTimeScope">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="actual" />
+          <xs:enumeration value="calculated" />
+          <xs:enumeration value="published" />
+          <xs:enumeration value="scheduled" />
+          <xs:enumeration value="earliest" />
+          <xs:enumeration value="latest" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="tRosteringScope">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="conceptional" />
+          <xs:enumeration value="operational" />
+          <xs:enumeration value="timetable" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="tTrainGroupType">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="interval" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="tSpecialServiceType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="include" />
+      <xs:enumeration value="exclude" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tTrainType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="operational" />
+      <xs:enumeration value="commercial" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tOcpTTType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="stop" />
+      <xs:enumeration value="pass" />
+      <xs:enumeration value="begin">
+        <xs:annotation>
+          <xs:documentation>possible for the first ocp, if train part begins at this ocp and is not part of a longer train path</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="end">
+        <xs:annotation>
+          <xs:documentation>possible for the last ocp, if train part ends at this ocp and is not part of a longer train path</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tOnOff">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="both" />
+      <xs:enumeration value="on" />
+      <xs:enumeration value="off" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tConnOperation">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="none" />
+          <xs:enumeration value="join">
+            <xs:annotation>
+              <xs:documentation>train will be coupled together with an other train</xs:documentation>
+              <xs:documentation>DEPRECATED with 2.1: use commercial trains instead</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="split">
+            <xs:annotation>
+              <xs:documentation>part of the train will go on as an other train</xs:documentation>
+              <xs:documentation>DEPRECATED with 2.1: use commercial trains instead</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="meet" />
+          <xs:enumeration value="turnaround">
+            <xs:annotation>
+              <xs:documentation>the train will go on as an other train</xs:documentation>
+              <xs:documentation>DEPRECATED with 2.1: use rosterings instead</xs:documentation>
+            </xs:annotation>
+          </xs:enumeration>
+          <xs:enumeration value="IsWaitingFor" />
+          <xs:enumeration value="IsExpectedBy" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="tStatisticFigure">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="maxDelayArrival" />
+          <xs:enumeration value="maxDelayDeparture" />
+          <xs:enumeration value="meanDelayArrival" />
+          <xs:enumeration value="meanDelayDeparture" />
+          <xs:enumeration value="medianDelayArrival" />
+          <xs:enumeration value="medianDelayDeparture" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+</xs:schema>

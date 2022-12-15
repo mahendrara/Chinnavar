@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns = "http://java.sun.com/xml/ns/javaee" 
+         version = "3.1"
+         xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation = "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
+    <enterprise-beans>
+        <session>
+            <ejb-name>TimerSessionBean</ejb-name>
+            <local-bean/>
+            <ejb-class>schedule.uiclasses.TimerSessionBean</ejb-class>
+            <session-type>Singleton</session-type>
+<!--            <ejb-local-ref>
+                <ejb-ref-name>ScheduleCreatorBean</ejb-ref-name>
+                <local>schedule.uiclasses.ScheduleCreatorBean</local>
+                <injection-target>  
+                    <injection-target-class>schedule.uiclasses.TimerSessionBean</injection-target-class>  
+                    <injection-target-name>scheduleCreatorBean</injection-target-name>  
+                </injection-target>
+            </ejb-local-ref>
+            <ejb-local-ref>
+                <ejb-ref-name>ScheduleCleaningBean</ejb-ref-name>
+                <local>schedule.uiclasses.ScheduleCleaningBean</local>
+                <injection-target>  
+                    <injection-target-class>schedule.uiclasses.TimerSessionBean</injection-target-class>  
+                    <injection-target-name>scheduleCleaningBean</injection-target-name>  
+                </injection-target>
+            </ejb-local-ref>-->
+            <timer>
+                <schedule>
+                    <hour>3</hour>
+                    <day-of-week>*</day-of-week>
+                </schedule>
+                <timeout-method>
+                    <method-name>timer_ScheduledDayCreator</method-name>
+                </timeout-method>
+                <persistent>false</persistent>
+                <info>Load new scheduled services</info>
+            </timer>
+            <timer>
+                <schedule>
+                    <minute>30</minute>
+                    <hour>3</hour>
+                    <day-of-week>*</day-of-week>
+                </schedule>
+                <timeout-method>
+                    <method-name>timer_ScheduleMaintenance</method-name>
+                </timeout-method>
+                <persistent>false</persistent>
+                <info>Clean history data</info>
+            </timer>
+			<timer>
+                <schedule>
+                    <minute>*/5</minute>
+                    <hour>*</hour>
+                    <day-of-week>*</day-of-week>
+                </schedule>
+                <timeout-method>
+                    <method-name>timer_PingScheduler</method-name>
+                </timeout-method>
+                <persistent>false</persistent>
+                <info>Test JMS connection</info>
+            </timer>
+        </session>
+    </enterprise-beans>
+</ejb-jar>

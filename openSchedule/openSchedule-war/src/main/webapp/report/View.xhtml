@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewReport_Title}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            
+            <!-- Selection panel for reports -->
+            <h:panelGroup id="panelGroup1">
+                
+                <h:outputText class="col-lg-1 control-label" value="#{bundle.ViewReport_Schedule}"/>
+                <h:panelGrid id="panelGrid1" columns="2">
+                    <h:selectOneMenu id="scheduleFilter" value="#{ReportController.schedule}" class="form-control" converter="#{ScheduleConverter}">
+                        <f:selectItems value="#{ReportController.schedules}" var="schedule" itemLabel="#{schedule.description}" itemValue="#{schedule}"/>
+                    </h:selectOneMenu>
+                    <h:commandButton id="generateReportButton" class="btn btn-default" value="#{bundle.ViewReport_GenerateReport}">
+                        <f:ajax execute="scheduleFilter" render="reportP :form1:messagePanel" listener="#{ReportController.GenerateReport()}"/>
+                    </h:commandButton>
+                </h:panelGrid>
+            </h:panelGroup>
+
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+
+            <!-- actual report panel -->
+            <h:panelGroup id="reportP">
+                <h:panelGrid columns="3">
+                    <h:outputText id="reportText" value="#{ReportController.report}" escape="false" />
+                </h:panelGrid>
+            </h:panelGroup>
+            
+        </ui:define>
+    </ui:composition>
+</html>

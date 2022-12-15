@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListDegradedPlanTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <div id="filterControl" class="panel panel-default">
+                <div class="panel-body form-inline">
+                    <h:outputText value="#{bundle.Filter_DegradedPlanGroup}"></h:outputText>
+                    <h:selectOneMenu id="degradedPlanGroupMenu" value="#{degradedPlanController.degradedPlanGroup}" styleClass="form-control"  converter="#{degradedPlanGroupConverter}">
+                        <f:selectItems value="#{degradedPlanController.degradedPlanGroups}" var="group" itemLabel="#{group.description}" itemValue="#{group}"/>
+                        <f:ajax render="@form" execute="@this" listener="#{degradedPlanController.degradedPlanGroupChanged}"></f:ajax>
+                    </h:selectOneMenu>
+
+                    <h:outputText value="#{bundle.Filter_DegradedPlan}"></h:outputText>
+                    <h:selectOneMenu id="degradedPlanMenu" value="#{degradedPlanController.degradedPlan}" styleClass="form-control"  converter="#{degradedPlanConverter}">
+                        <f:selectItems value="#{degradedPlanController.degradedPlans}" var="plan" itemLabel="#{plan.getText(languageBean.OSLocale)}" itemValue="#{plan}"/>
+                        <f:ajax render="@form" execute="@this" listener="#{degradedPlanController.degradedPlanChanged}"></f:ajax>
+                    </h:selectOneMenu>
+                </div>
+            </div>
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:panelGrid id="panelGrid1" columns="1">
+                <ui:remove>
+                    <h:commandLink id="addButton" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not scheduledServiceController.addAllowed}" actionListener="#{scheduledServiceController.addNew}">
+                    </h:commandLink>
+                </ui:remove>
+            </h:panelGrid>
+            <h:panelGroup id="panelGroup1">
+                <h:outputText value="#{degradedPlanController.pagination.pageFirstItem + 1}..#{degradedPlanController.pagination.pageLastItem + 1}/#{degradedPlanController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink action="#{degradedPlanController.previous}" value="#{bundle.Previous} #{degradedPlanController.pagination.pageSize}" rendered="#{degradedPlanController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink action="#{degradedPlanController.next}" value="#{bundle.Next} #{degradedPlanController.pagination.pageSize}" rendered="#{degradedPlanController.pagination.hasNextPage}"/>&nbsp;
+                <h:dataTable id="sService" value="#{degradedPlanController.items}" var="item" styleClass="table table-nonfluid table-striped table-bordered table-hover" rules="all" >
+                    <!-- SERVICE -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_description}"/>
+                        </f:facet>
+                        <h:panelGroup id="descP">
+                            <h:outputText value="#{item.description}" rendered="#{not item.editing}"/>
+                            <h:inputText id="descriptionInput" value="#{item.description}" class="form-control" rendered="#{item.editing}" required="true" requiredMessage="#{bundle.RequiredMessage_description}" validatorMessage="#{bundle.ValidatorMessage_serviceName}">
+                                <f:validateRegex pattern="#{bundle.SERVICE_REGEXP_PATTERN}"/>
+                            </h:inputText>
+                        </h:panelGroup>
+                    </h:column>
+                    <ui:remove>
+                        <!-- Date -->
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListScheduledServiceTitle_date}"/>
+                            </f:facet>
+                            <h:panelGroup id="col2">
+                                <h:outputText value="#{item.day.dateOfDay}">
+                                    <f:convertDateTime type="date"/>
+                                </h:outputText>
+                            </h:panelGroup>
+                        </h:column>
+                        <!-- TRAIN TYPE -->
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListScheduledServiceTitle_trainType}"/>
+                                <br />
+                                <h:panelGroup>
+                                    <h:selectOneMenu value="#{degradedPlanController.filter.trainTypeFilter}" class="form-control" converter="#{trainTypeConverter}">
+                                        <f:selectItem itemLabel="#{bundle.FilterAll}" itemValue="#{degradedPlanController.trainTypeAll}"></f:selectItem>
+                                        <f:selectItems value="#{degradedPlanController.trainTypes}" var="trainType" itemLabel="#{trainType.description}" itemValue="#{trainType}">
+                                        </f:selectItems>
+                                        <f:ajax render="@form" execute="@this" listener="#{degradedPlanController.resetPagination()}"></f:ajax>
+                                    </h:selectOneMenu>
+                                </h:panelGroup>
+                            </f:facet>
+
+                            <h:panelGroup id="trainTypeP">
+                                <h:outputText value="#{item.trainType.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                                <h:selectOneMenu value="#{item.trainType}" rendered="#{item.editing}" class="form-control" converter="#{trainTypeConverter}">
+                                    <f:selectItems value="#{degradedPlanController.trainTypes}" var="trainType" itemLabel="#{trainType.description}" itemValue="#{trainType}">
+                                    </f:selectItems>
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </h:column>
+                    </ui:remove>
+                    <!-- AREA -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_area}"/>
+                            <br />
+                            <h:panelGroup>
+                                <h:selectOneMenu id="areaMenu" value="#{degradedPlanController.filter.areaFilter}" class="form-control" converter="#{TTObjectConverter}">
+                                    <f:selectItem itemLabel="#{bundle.FilterAll}" itemValue="#{degradedPlanController.areaAll}"></f:selectItem>
+                                    <f:selectItems value="#{degradedPlanController.areas}" var="areaItem" itemLabel="#{areaItem.getText(languageBean.OSLocale)}" itemValue="#{areaItem}">
+                                    </f:selectItems>
+                                    <f:ajax render="@form" execute="@this" listener="#{degradedPlanController.resetPagination()}"></f:ajax>
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </f:facet>
+                        <h:panelGroup id="areaP">
+                            <h:outputText value="#{item.areaObj.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <ui:remove>
+                                <h:selectOneMenu value="#{item.areaObj}" rendered="#{item.editing}" class="form-control" converter="#{TTObjectConverter}">
+                                    <f:selectItems value="#{degradedPlanController.areas}" var="areaItem" itemLabel="#{areaItem.getText(languageBean.OSLocale)}" itemValue="#{areaItem}">
+                                    </f:selectItems>
+                                </h:selectOneMenu>
+                            </ui:remove>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- FROM -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_plannedStartObj}"/>
+                        </f:facet>
+                        <h:panelGroup id="startObjP">
+                            <h:outputText value="#{item.plannedStartObj.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <ui:remove>
+                                <h:selectOneMenu rendered="#{item.editing}" class="form-control" value="#{degradedPlanController.selectedServiceStartTTObjectType}" converter="#{TTObjectTypeConverter}">
+                                    <f:selectItems var="objtype" value="#{degradedPlanController.possibleServiceStartTTObjectTypes}" itemLabel="#{objtype.getText(languageBean.OSLocale)}" itemValue="#{objtype}"/>
+                                    <f:ajax render="possibleLocations1" execute="@this"></f:ajax>
+                                </h:selectOneMenu>
+                                <h:selectOneMenu id="possibleLocations1" rendered="#{item.editing}" class="form-control" value="#{item.plannedStartObj}" converter="#{TTObjectConverter}" required="true" requiredMessage="#{bundle.RequiredMessage_from}">
+                                    <f:selectItems var="location" value="#{degradedPlanController.possibleServiceStartLocations}" itemLabel="#{location.getText(languageBean.OSLocale)}" itemValue="#{location}"/>
+                                </h:selectOneMenu>
+                            </ui:remove>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- TO -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_plannedStopObj}"/>
+                        </f:facet>
+                        <h:panelGroup id="stopObjP">
+                            <h:outputText value="#{item.plannedStopObj.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <ui:remove>
+                                <h:selectOneMenu rendered="#{item.editing}" class="form-control" value="#{degradedPlanController.selectedServiceStopTTObjectType}" converter="#{TTObjectTypeConverter}">
+                                    <f:selectItems var="objtype" value="#{degradedPlanController.possibleServiceStopTTObjectTypes}" itemLabel="#{objtype.getText(languageBean.OSLocale)}" itemValue="#{objtype}"/>
+                                    <f:ajax render="possibleLocations2" execute="@this"></f:ajax>
+                                </h:selectOneMenu>
+                                <h:selectOneMenu id="possibleLocations2" rendered="#{item.editing}" class="form-control" value="#{item.plannedStopObj}" converter="#{TTObjectConverter}" required="true" requiredMessage="#{bundle.RequiredMessage_to}">
+                                    <f:selectItems var="location" value="#{degradedPlanController.possibleServiceStopLocations}" itemLabel="#{location.getText(languageBean.OSLocale)}" itemValue="#{location}"/>
+                                </h:selectOneMenu>
+                            </ui:remove>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- START TIME -->
+                    <ui:remove>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListScheduledServiceTitle_startTime}"/>
+                            </f:facet>
+                            <h:panelGroup id="startTimeP">
+                                <h:outputText value="+#{item.dayForPlannedStartTime} #{bundle.day} " rendered="#{item.dayForPlannedStartTime>0}"></h:outputText>
+
+                                <h:outputText id="col6" value="#{item.plannedStartTime}" rendered="#{not item.editing}">
+                                    <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                                </h:outputText>
+                                <ui:remove>
+                                    <h:inputText label="#{bundle.DateTime_Time}" styleClass="timePickerInput1 form-control"  rendered="#{item.editing}" value="#{item.plannedStartTime}" required="true" maxlength="8" size="8" requiredMessage="#{bundle.RequiredMessage_starttime}"  onfocus="initTimePickerWithTime('#{languageBean.locale.displayLanguage}','#{item.plannedStartTime.hours}','#{item.plannedStartTime.minutes}','#{item.plannedStartTime.seconds}')">
+                                        <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                                        <f:ajax event="blur" onevent="onAjaxUpdate" render="startTimeP"></f:ajax>
+                                    </h:inputText>
+                                </ui:remove>
+                            </h:panelGroup>
+                        </h:column>
+                        <!-- END TIME -->
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListScheduledServiceTitle_endTime}"/>
+                            </f:facet>
+                            <h:panelGroup id="endTimeP">
+                                <h:outputText value="+#{item.dayForPlannedStopTime} #{bundle.day} " rendered="#{item.dayForPlannedStopTime>0}"></h:outputText>
+                                <h:outputText id="col7" value="#{item.plannedStopTime}">
+                                    <f:convertDateTime type="time"  pattern="HH:mm:ss"/>
+                                </h:outputText>
+                            </h:panelGroup>
+                        </h:column>
+                    
+                    <!-- DURATION -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_duration}"/>
+                        </f:facet>
+                        <h:panelGroup id="durationP">
+                            <h:outputText value="+#{item.dayForPlannedDuration} #{bundle.day} " rendered="#{item.dayForPlannedDuration>0}"></h:outputText>
+                            <h:outputText value="#{item.timeForPlannedDuration}"/>
+                        </h:panelGroup>
+                    </h:column>
+                    </ui:remove>
+                    <!-- PLANNED STATE -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_plannedState}"/>
+                            <br />
+                            <h:panelGroup>
+                                <h:selectOneMenu id="plannedStateMenu" value="#{degradedPlanController.filter.plannedStateFilter}" class="form-control" converter="#{schedulingStateConverter}">
+                                    <f:selectItem itemLabel="#{bundle.FilterAll}" itemValue="#{degradedPlanController.schedulingStateAll}"></f:selectItem>
+                                    <f:selectItems value="#{degradedPlanController.schedulingStates}" var="state" itemLabel="#{state.getText(languageBean.OSLocale)}" itemValue="#{state}">
+                                    </f:selectItems>
+                                    <f:ajax render=":form1:panelGrid1 :form1:panelGroup1" listener="#{degradedPlanController.filterChanged}"></f:ajax>
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </f:facet>
+                        <h:panelGroup id="plannedStateP">
+                            <h:outputText value="#{item.plannedState.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <ui:remove>
+                                <h:selectOneMenu value="#{item.plannedState}" rendered="#{item.editing}" class="form-control" converter="#{schedulingStateConverter}">
+                                    <f:selectItems value="#{degradedPlanController.schedulingStates}" var="state" itemLabel="#{state.getText(languageBean.OSLocale)}" itemValue="#{state}">
+                                    </f:selectItems>
+                                </h:selectOneMenu>
+                            </ui:remove>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- CURRENT STATE -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_currentState}"/>
+                            <br />
+                            <h:panelGroup>
+                                <h:selectOneMenu id="currentStateMenu" value="#{degradedPlanController.filter.currentStateFilter}" class="form-control" converter="#{schedulingStateConverter}">
+                                    <f:selectItem itemLabel="#{bundle.FilterAll}" itemValue="#{degradedPlanController.schedulingStateAll}"></f:selectItem>
+                                    <f:selectItems value="#{degradedPlanController.schedulingStates}" var="state" itemLabel="#{state.getText(languageBean.OSLocale)}" itemValue="#{state}">
+                                    </f:selectItems>
+                                    <f:ajax render=":form1:panelGrid1 :form1:panelGroup1" listener="#{degradedPlanController.filterChanged}"></f:ajax>
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </f:facet>
+                        <h:outputText value="#{item.currentState.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                    </h:column>
+                    <!-- NUMBER OF ACTIONS -->
+                    <!--<h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_numberOfActions}"/>
+                        </f:facet>
+                        <h:outputText id="col11" value="#{item.numberOfActions}"/>
+                    </h:column>-->
+                    <!-- ****** -->
+                    <!-- COMMANDS -->
+                    <!-- ****** -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:panelGroup id="commandP">
+                            <h:commandLink id="detail" styleClass="icon-search" title="#{bundle.Tooltip_View}" rendered="#{not item.editing}" action="#{degradedPlanController.prepareView(item)}">
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <ui:remove>
+                                <h:commandLink id="detailsButton" styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not item.editing}">
+                                    <f:ajax event="click" render=":form1:panelGrid1 sService:descP sService:areaP sService:trainTypeP sService:startObjP sService:stopObjP sService:startTimeP sService:endTimeP sService:plannedStateP sService:commandP"
+                                            listener="#{degradedPlanController.activateEdit(item)}" onevent="onAjaxUpdate"></f:ajax>
+                                </h:commandLink>
+                                <h:commandLink id="SaveButton" styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{item.editing}">
+                                    <f:ajax event="click" execute="sService:descP sService:areaP sService:trainTypeP sService:startObjP sService:stopObjP sService:startTimeP sService:endTimeP sService:plannedStateP sService:commandP" 
+                                            render= ":form1:messagePanel1 :form1:panelGrid1 :form1:panelGroup1"
+                                            listener="#{degradedPlanController.save(item)}"  onevent="onAjaxUpdate"></f:ajax>
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink id="cancelButton" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" rendered="#{item.editing and !item.creating}">
+                                    <f:ajax event="click" listener="#{degradedPlanController.cancel(item)}"  onevent="onAjaxUpdate" render=":form1:panelGrid1 sService:descP sService:areaP sService:trainTypeP sService:startObjP sService:stopObjP sService:startTimeP sService:endTimeP sService:plannedStateP sService:commandP"></f:ajax>
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                            </ui:remove>
+                            <h:commandLink id="deleteButton" styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" immediate="true">
+                                <f:ajax event="click" onevent="onAjaxUpdate" render=":form1:messagePanel :form1:panelGrid1 :form1:panelGroup1" listener="#{degradedPlanController.destroy(item)}"/>
+                            </h:commandLink>
+                        </h:panelGroup>
+                    </h:column>
+                </h:dataTable>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+
+</html>

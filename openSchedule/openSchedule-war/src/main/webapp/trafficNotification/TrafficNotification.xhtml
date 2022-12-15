@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="Traffic Notification"></h:outputText>
+        </ui:define>
+
+        <ui:define name="body">
+            <h:form><div id="test"></div>
+                <h:panelGroup id="messagePanel" layout="block">
+                    <h:messages id="message" errorStyle="color: red" infoStyle="color: green" layout="table"/>
+                </h:panelGroup>
+                <!--<div class="row-fluid">-->
+                    <!--<h4>Traffic Notifications</h4>-->
+                    <!--<div class="col-lg-12 widget">-->
+                        <!--<h5>Instant Data</h5>-->
+                        <table id="trafficNotificationTable" class="table-nonfluid table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th id ="iconCol">Type</th>
+                                    <th>Service</th>
+                                    <th>Line</th>
+                                    <th>Location</th>
+                                    <th>Time</th>
+                                    <th>Text</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    <!--</div>
+                </div>-->
+                <br />
+            </h:form>
+            <script type="text/javascript" src="/openSchedule-war/resources/js/websocketCommon.js"></script>
+            <script type="text/javascript" src="/openSchedule-war/resources/js/trafficNotification.js"></script>
+        </ui:define>
+
+    </ui:composition>
+
+</html>

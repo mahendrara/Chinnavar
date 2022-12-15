@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListTTObjectTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel1" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            
+            <h:panelGroup id="panelGroup1">
+                <h:outputText value="#{TTObjectController.pagination.pageFirstItem + 1}..#{TTObjectController.pagination.pageLastItem + 1}/#{TTObjectController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink id="previousButton" action="#{TTObjectController.previous}" value="#{bundle.Previous} #{TTObjectController.pagination.pageSize}" rendered="#{TTObjectController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink id="nextButton" action="#{TTObjectController.next}" value="#{bundle.Next} #{TTObjectController.pagination.pageSize}" rendered="#{TTObjectController.pagination.hasNextPage}"/>&nbsp;
+                <h:dataTable id="objectList" value="#{TTObjectController.items}" var="item" styleClass="table table-nonfluid table-striped table-bordered table-hover" rules="all" >
+                    
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTTObjectTitle_scheduleName}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.scheduleName}"/>
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTTObjectTitle_externalName}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.externalName}"/>
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTTObjectTitle_objectType}"/>
+                            <br/>
+                            
+                            <h:selectOneMenu id="objectTypeFilter" value="#{TTObjectController.selectedTTObjectType}" class="form-control" converter="#{TTObjectTypeConverter}">
+                                <f:selectItem itemLabel="#{TTObjectController.objectTypeAll.description}" itemValue="#{TTObjectController.objectTypeAll}"></f:selectItem>
+                                <f:selectItems value="#{TTObjectController.ttObjectTypes}" var="objectType" itemLabel="#{objectType.getText(languageBean.OSLocale)}" itemValue="#{objectType}"/>
+                                <f:ajax render="@form" execute="@this" listener="#{TTObjectController.resetPagination()}"></f:ajax>
+                            </h:selectOneMenu>
+                        </f:facet>
+                        
+                        <h:outputText value="#{item.TTObjectType.getText(languageBean.OSLocale)}"/>
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTTObjectTitle_description}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.getText(languageBean.OSLocale)}"/>
+                    </h:column>
+                    
+                    <h:column rendered="false">
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTTObjectTitle_ttobjid}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.TTObjId}"/>
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTTObjectTitle_numberOfChildren}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.childCount}"/>
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTTObjectTitle_numberOfProperty}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.propertyCount}"/>
+                    </h:column>
+                    
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:commandLink id="detail" styleClass="icon-search" title="#{bundle.Tooltip_View}" disabled="#{item.childCount==0 and item.propertyCount==0}" action="#{TTObjectController.prepareView(item)}"/>
+                    </h:column>
+                    
+                </h:dataTable>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+
+</html>

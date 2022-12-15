@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListTrainTypeTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block" styleClass="alert-info">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:panelGrid id="panelGrid1" columns="1" >
+                <h:commandLink id="addTrainButton" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not TrainTypeController.isAddAllowed()}">
+                    <p:ajax event="click" update="panelGroup1 @this" listener="#{TrainTypeController.addNew}" />
+                </h:commandLink>
+            </h:panelGrid>
+            <h:panelGroup id="panelGroup1">
+                <h:outputText value="#{TrainTypeController.pagination.pageFirstItem + 1}..#{TrainTypeController.pagination.pageLastItem + 1}/#{TrainTypeController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink action="#{TrainTypeController.previous}" value="#{bundle.Previous} #{TrainTypeController.pagination.pageSize}" rendered="#{TrainTypeController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink action="#{TrainTypeController.next}" value="#{bundle.Next} #{TrainTypeController.pagination.pageSize}" rendered="#{TrainTypeController.pagination.hasNextPage}"/>&nbsp;
+                <p:dataTable id="table" value="#{TrainTypeController.items}" var="item" expandedRow="#{item.editing}" tableStyle="width:auto" styleClass="table table-nonfluid table-striped table-hover">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_trainType}"/>
+                        </f:facet>
+                        <h:panelGroup id="traintype">
+                            <h:outputText value="#{item.description}" rendered="#{not item.editing}"/>
+                            <h:inputText id="descriptionInput" value="#{item.description}" styleClass="form-control" rendered="#{item.editing}" required="true" requiredMessage="#{bundle.RequiredMessage_trainType}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_parent}"/>
+                        </f:facet>
+                        <h:panelGroup id="parent">
+                            <h:outputText value="&nbsp;" rendered="#{item.canBeChild == false and !item.creating}"/>
+                            <h:outputText value="#{item.derivedFrom.description}" rendered="#{item.canBeChild == true and not item.editing}"/>
+                            <h:selectOneMenu id="parentMenu" value="#{item.derivedFrom}" rendered="#{item.canBeChild == true and item.editing}" styleClass="form-control" converter="#{trainTypeConverter}">
+                                <f:selectItems value="#{TrainTypeController.getTrainTypes(item)}" var="parentItem" itemLabel="#{parentItem.description}" itemValue="#{parentItem}"/>
+                                <p:ajax update=":form1:table:detailPanel obiftype radioP obP gpsP useAsVehicleP tractionP speedProfileP dyConsist len consist child simulateP" listener="#{TrainTypeController.parentChanged(item)}" />
+                            </h:selectOneMenu>  
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_CanChild}"/>
+                        </f:facet>
+                        <h:panelGroup id="child">
+                            <h:selectBooleanCheckbox id="canBeChildCheckbox" value="#{item.canBeChild}" disabled="#{not item.editing}">
+                                <p:ajax update=":form1:table:detailPanel parent obiftype radioP obP gpsP useAsVehicleP tractionP speedProfileP dyConsist len consist child simulateP" listener="#{TrainTypeController.canBeChildChanged(item)}" />
+                            </h:selectBooleanCheckbox>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_onboardradio}"/>
+                        </f:facet>
+                        <h:panelGroup id="radioP">
+                            <h:selectBooleanCheckbox id="radioCheckbox" value="#{item.onboardRadio}" disabled="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_movingblockcapable}"/>
+                        </f:facet>
+                        <h:panelGroup id="obP">
+                            <h:selectBooleanCheckbox id="movingBlockCheckbox" value="#{item.movingBlockCapable}" disabled="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_gpsposcapable}"/>
+                        </f:facet>
+                        <h:panelGroup id="gpsP">
+                            <h:selectBooleanCheckbox id="gpsCheckbox" value="#{item.gpsPosCapable}" disabled="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_obiftype}"/>
+                        </f:facet>
+                        <h:panelGroup id="obiftype">
+                            <h:outputText value="#{item.obiftypeid}" rendered="#{not item.editing}"/>
+                            <h:inputText id="obidInput" value="#{item.obiftypeid}" styleClass="form-control" rendered="#{item.editing}" converterMessage="#{bundle.ValidatorMessage_obiftypenumer}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_dynamicConsist}"/>
+                        </f:facet>
+                        <h:panelGroup id="dyConsist">
+                            <h:selectBooleanCheckbox id="dynamicConsistCheckbox" value="#{item.dynamicConsist}" disabled="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_CanConsist}"/>
+                        </f:facet>
+                        <h:panelGroup id="consist">
+                            <h:selectBooleanCheckbox id="consistCheckbox" value="#{item.canBeConsist}" disabled="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_len}"/>
+                        </f:facet>
+                        <h:panelGroup id="len">
+                            <h:outputText value="#{item.defaultlength}" rendered="#{not item.editing}"/>
+                            <h:inputText id="defaultLengthInput" value="#{item.defaultlength}" styleClass="form-control" rendered="#{item.editing}" validatorMessage="#{bundle.ValidatorMessage_defaultLength}" converterMessage="#{bundle.ConvertMessage_DefaultLength}">
+                                <f:validateLongRange minimum="1"></f:validateLongRange>
+                            </h:inputText>
+                        </h:panelGroup>
+                    </p:column>
+                    <ui:remove>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTrainTypeTitle_propertiesown}"/>
+                            </f:facet>
+                            <h:panelGroup>
+                                <h:outputText value="#{item.getTrainTypeProperties().size()}" rendered="true"/>
+                            </h:panelGroup>
+                        </p:column>
+                    </ui:remove>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_useasvehicle}"/>
+                        </f:facet>
+                        <h:panelGroup id="useAsVehicleP">
+                            <h:selectBooleanCheckbox id="useAsVehicleCheckbox" value="#{item.useAsVehicle}" disabled="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_assumetraction}"/>
+                        </f:facet>
+                        <h:panelGroup id="tractionP">
+                            <h:selectBooleanCheckbox id="tractionCheckbox" value="#{item.assumeTraction}" disabled="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_hasspeedprofile}"/>
+                        </f:facet>
+                        <h:panelGroup id="speedProfileP">
+                            <h:selectBooleanCheckbox id="hasSpeedProfileCheckbox" value="#{item.hasSpeedProfile}" disabled="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTrainTypeTitle_simulate}"/>
+                        </f:facet>
+                        <h:panelGroup id="simulateP">
+                            <h:selectOneMenu id="simulateMenu" value="#{item.simulate}" rendered="#{item.editing}" styleClass="form-control" >
+                                <f:selectItems value="#{TrainTypeController.getDriveTimeEst()}" var="simulate" itemValue="#{simulate.value}" itemLabel="#{simulate.key}"/>
+                            </h:selectOneMenu>
+                            <h:outputText value="#{TrainTypeController.getDriveTimeEstKey(item.simulate)}" rendered="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:panelGroup pt:title="#{bundle.Tooltip_View}" layout="block" style="color: #428bca !important;" class="icon-search ui-row-toggler" rendered="#{not item.editing}"/>
+                        <h:panelGroup pt:title="#{bundle.Tooltip_View}" layout="block" class="icon-search" rendered="#{item.editing}"/>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="editButton" styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not item.editing}">
+                            <p:ajax event="click" update=":form1:panelGrid1 :form1:panelGroup1 :form1:messagePanel" listener="#{TrainTypeController.activateEdit(item)}"/>
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="saveButton" styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{item.editing}">
+                            <p:ajax event="click" process="@this traintype parent useAsVehicleP simulateP tractionP radioP obP gpsP dyConsist consist child len speedProfileP obiftype" update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel" listener="#{TrainTypeController.save(item)}"/>
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="cancelButton" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" immediate="true" rendered="#{item.editing and !item.creating}">
+                            <p:ajax event="click" update=":form1:panelGrid1 :form1:panelGroup1 :form1:messagePanel" listener="#{TrainTypeController.cancel(item)}"/>
+                        </h:commandLink>
+                        <h:commandLink id="deleteButton" styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" rendered="#{item.creating or not item.editing}">
+                            <p:ajax event="click" update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel" listener="#{TrainTypeController.destroy(item)}"/>
+                        </h:commandLink>
+                    </p:column>
+                    <p:rowExpansion>
+                        <p:panel id="detailPanel" style="border: none;">
+                            <p:tabView id="tabs" dynamic="true" cache="false">
+                                <p:tab id="detailTab" title="#{bundle.ListTrainTypeTitle_Properties}">
+                                    <h:panelGroup>
+                                        <h:selectOneMenu id="propertyMenu" value="#{item.createProp}" rendered="#{item.getUnsetTrainProperties().size() != 0}" styleClass="form-control" converter="#{trainPropertyConverter}">
+                                            <f:selectItems value="#{item.getUnsetTrainProperties()}" var="propItem" itemLabel="#{propItem.getText(languageBean.getOSLocale())}(#{propItem.getPropertyType()})" itemValue="#{propItem}"/>
+                                        </h:selectOneMenu>
+                                        <h:commandLink id="addPropertyButton" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not TrainTypeController.isAddPropertyAllowed(item)}">
+                                            <p:ajax event="click" process="@this propertyMenu" update="propertyTable @this" listener="#{TrainTypeController.addNewTrainTypeProperty(item, true)}" />
+                                        </h:commandLink>
+                                    </h:panelGroup>
+                                    <p:dataTable id="propertyTable" value="#{item.getTrainTypeProperties()}" var="prop" tableStyle="width:auto" styleClass="table table-nonfluid table-striped table-hover">
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="#{bundle.ListTrainTypeTitle_propertyname}"/>
+                                            </f:facet>
+                                            <h:panelGroup id="propname">
+                                                <h:outputText value="#{prop.getPropid().getText(languageBean.getOSLocale())}"/>
+                                            </h:panelGroup>
+                                        </p:column>
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="#{bundle.ListTrainTypeTitle_propertyvalue}"/>
+                                            </f:facet>
+                                            <h:panelGroup id="propvalue">
+                                                <ui:remove>
+                                                <h:outputText rendered="#{(prop.getPropid().getPropertyType() eq 'ttobject') and not prop.editing}" value="#{prop.getTTObjId().getText(languageBean.getOSLocale())}"/>
+                                                <h:selectOneMenu value="#{prop.TTObjId}" rendered="#{prop.getPropid().getPropertyType() == 'ttobject' and prop.editing}" styleClass="form-control" converter="#{TTObjectConverter}">
+                                                    <f:selectItems value="#{TrainTypeController.getTTObjects()}" var="ttobjItem" itemLabel="#{ttobjItem.getText(languageBean.getOSLocale())}" itemValue="#{ttobjItem}"/>
+                                                </h:selectOneMenu>
+
+                                                <h:outputText rendered="#{prop.getPropid().getPropertyType() == 'tripobject' and not prop.editing}" value="#{prop.getTripid().getDescription()}"/>
+                                                <h:selectOneMenu value="#{prop.tripid}" rendered="#{prop.getPropid().getPropertyType() == 'tripobject' and prop.editing}" styleClass="form-control" converter="#{tripConverter}">
+                                                    <f:selectItems value="#{TrainTypeController.getTrips()}" var="tripItem" itemLabel="#{tripItem.getDescription()}" itemValue="#{tripItem}"/>
+                                                </h:selectOneMenu>
+                                                </ui:remove>
+
+                                                <h:outputText rendered="#{prop.getPropid().getPropertyType() == 'integer' and not prop.editing}" value="#{prop.ivalue}"/>
+                                                <h:inputText id="valueInput" value="#{prop.ivalue}" styleClass="form-control" maxlength="32" rendered="#{prop.getPropid().getPropertyType() == 'integer' and prop.editing}"
+                                                             required = "true" requiredMessage="#{bundle.RequiredMessage_trainproperty}" converterMessage="#{bundle.ConvertMessage_property}">
+                                                    <f:validateLongRange minimum="1"></f:validateLongRange>
+                                                </h:inputText>
+
+                                                <h:selectBooleanCheckbox id="valid" value="#{prop.bvalue}" disabled="#{prop.getPropid().getPropertyType() == 'boolean' and not prop.editing}" rendered="#{prop.getPropid().getPropertyType() == 'boolean'}"/>
+
+                                                <h:outputText rendered="#{prop.getPropid().getPropertyType() == 'string' and not prop.editing}" value="#{prop.svalue}"/>
+                                                <h:inputText id="svalueInput" value="#{prop.svalue}" styleClass="form-control" maxlength="32" rendered="#{prop.getPropid().getPropertyType() == 'string' and prop.editing}"
+                                                             required = "true" requiredMessage="#{bundle.RequiredMessage_trainproperty}"/>
+                                            </h:panelGroup>
+                                        </p:column>
+
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="&nbsp;"/>
+                                            </f:facet>
+                                            <h:panelGroup id="commandLinks">
+                                            <h:commandLink id="editPropertyButton" styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not prop.editing}">
+                                                <p:ajax event="click" update="propvalue commandLinks :form1:messagePanel" listener="#{TrainTypeController.activateTrainTypePropertyEdit(prop)}"/>
+                                            </h:commandLink>
+                                            <h:outputText value=" "/>
+                                            <h:commandLink id="savePropertyButton" styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{prop.editing}">
+                                                <p:ajax event="click" process="@this propvalue" update=":form1:table:detailPanel commandLinks :form1:messagePanel" listener="#{TrainTypeController.saveTrainTypeProperty(prop, item)}"/>
+                                            </h:commandLink>
+                                            <h:outputText value=" "/>
+                                            <h:commandLink id="cancelPropertyButton" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" immediate="true" rendered="#{prop.editing and !prop.creating}">
+                                                <p:ajax event="click" update="propvalue commandLinks :form1:messagePanel" listener="#{TrainTypeController.cancelTrainTypeProperty(prop)}"/>
+                                            </h:commandLink>
+                                            <h:commandLink id="deletePropertyButton" styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" rendered="#{prop.creating or not prop.editing}" immediate="true">
+                                                <p:ajax event="click" update=":form1:table:detailPanel :form1:messagePanel :form1:panelGrid1" listener="#{TrainTypeController.destroyTrainTypeProperty(prop, item)}" />
+                                            </h:commandLink>
+                                            </h:panelGroup>
+                                        </p:column>
+
+
+                                    </p:dataTable>
+                                </p:tab>
+                                <p:tab id="childrenTab" title="#{bundle.ListTrainTypeTitle_TabSubTypes}">
+                                    <p:dataTable id="childrenTrainList" value="#{item.getTrainSubTypes()}" var="subItem" tableStyle="width:auto" styleClass="table table-nonfluid table-striped table-hover">
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="#{bundle.ListTrainTypeTitle_trainType}"/>
+                                            </f:facet>
+                                            <h:panelGroup>
+                                                <h:outputText value="#{subItem.description}" rendered="true"/>
+                                            </h:panelGroup>
+                                        </p:column>                                   
+                                        <p:column>
+                                            <f:facet name="header">
+                                                <h:outputText value="#{bundle.ListTrainTypeTitle_subType}"/>
+                                            </f:facet>
+                                            <h:panelGroup>
+                                                <h:outputText value="#{subItem.getTrainSubTypes().size()}" rendered="true"/>
+                                            </h:panelGroup>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:tab>
+                            </p:tabView>
+                        </p:panel>
+                    </p:rowExpansion>
+                </p:dataTable>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+
+</html>

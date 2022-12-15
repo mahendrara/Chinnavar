@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.bombardier.e2k</groupId>
+        <artifactId>openSchedule</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>openSchedule-ear</artifactId>
+    <packaging>ear</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+<!--    <modules>-->
+<!--        <module>openSchedule-ejb</module>-->
+<!--        <module>openSchedule-war</module>-->
+<!--    </modules>-->
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>openSchedule-ejb</artifactId>
+            <version>${project.version}</version>
+            <type>ejb</type>
+<!--            <scope>compile</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>openSchedule-war</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+<!--            <scope>compile</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>openSchedule-war</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+
+    <scm>
+        <connection>scm:svn:http://svn-fi/repos/atr/tmscore/branches/5.0-patch3/openSchedule</connection>
+        <developerConnection>scm:svn:http://svn-fi/repos/atr/tmscore/branches/5.0-patch3/openSchedule</developerConnection>
+        <url>scm:svn:http://svn-fi/repos/atr/tmscore/branches/5.0-patch3/openSchedule</url>
+    </scm>
+
+    <build>
+        <finalName>openSchedule</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+                    <buildNumberPropertyName>buildNumber</buildNumberPropertyName>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ear-plugin</artifactId>   <!-- used maven-ear-plugin for packaging war, jar modules into ear -->
+                <version>3.1.0</version>
+                <configuration>
+                    <unpackTypes>rar,war,ejb</unpackTypes>
+                    <finalName>openSchedule</finalName>
+                    <generateApplicationXml>false</generateApplicationXml>
+                    <applicationXml>${project.basedir}/src/main/resources/META-INF/application.xml</applicationXml>
+                    <defaultLibBundleDir>lib</defaultLibBundleDir> <!-- default bundle dir is 'lib' which will include all the libs except war and ejb jars -->
+                    <skinnyWars>true</skinnyWars>   <!-- to allow WARs to reference external JARs packaged within EAR via class-path setting in their MANIFEST.MF. This is to avoid very large WARs (in case of multiple WARs) due to presence of duplicate JARs -->
+                    <modules>
+                        <ejbModule>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>openSchedule-ejb</artifactId>
+                            <unpack>false</unpack>
+                            <bundleFileName>openSchedule-ejb.jar</bundleFileName>
+                        </ejbModule>
+                        <webModule>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>openSchedule-war</artifactId>
+                            <contextRoot>/openSchedule-war</contextRoot>
+                            <unpack>false</unpack>
+                            <bundleFileName>openSchedule-war.war</bundleFileName>
+                        </webModule>
+                    </modules>
+                    <archive>
+                        <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Version>5.0.${buildNumber}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
+
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

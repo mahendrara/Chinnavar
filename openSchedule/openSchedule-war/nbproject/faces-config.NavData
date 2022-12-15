@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scene Scope="Project" version="2">
+    <Scope Scope="Faces Configuration Only"/>
+    <Scope Scope="Project">
+        <Node id="map/map.xhtml" x="400" y="300" zoom="true"/>
+        <Node id="connection/View.xhtml" x="900" y="450" zoom="true"/>
+        <Node id="plannedService/View.xhtml" x="400" y="1350" zoom="true"/>
+        <Node id="connection/List.xhtml" x="900" y="600" zoom="true"/>
+        <Node id="movementTrip/View.xhtml" x="900" y="300" zoom="true"/>
+        <Node id="degradedPlan/List.xhtml" x="2150" y="300" zoom="true"/>
+        <Node id="resources/openSchedule/LongTermGlobalFilter.xhtml" x="1900" y="450" zoom="true"/>
+        <Node id="movementTrip/List.xhtml" x="650" y="450" zoom="true"/>
+        <Node id="plannedTrip/ListStation.xhtml" x="150" y="150" zoom="true"/>
+        <Node id="ttObject/List.xhtml" x="1400" y="600" zoom="true"/>
+        <Node id="scheduledDuty/List.xhtml" x="150" y="750" zoom="true"/>
+        <Node id="trafficNotification/TrafficNotification.xhtml" x="900" y="750" zoom="true"/>
+        <Node id="timeBlock/View.xhtml" x="900" y="150" zoom="true"/>
+        <Node id="degradedPlan/View.xhtml" x="1400" y="300" zoom="true"/>
+        <Node id="tripTemplate/View.xhtml" x="1650" y="450" zoom="true"/>
+        <Node id="scheduledDay/List.xhtml" x="150" y="900" zoom="true"/>
+        <Node id="connection/Edit.xhtml" x="1150" y="150" zoom="true"/>
+        <Node id="generic/startpage.xhtml" x="400" y="1200" zoom="true"/>
+        <Node id="ttObject/View.xhtml" x="150" y="1050" zoom="true"/>
+        <Node id="timeBlock/List.xhtml" x="2150" y="150" zoom="true"/>
+        <Node id="plannedService/List.xhtml" x="400" y="150" zoom="true"/>
+        <Node id="tripTemplate/List.xhtml" x="1900" y="300" zoom="true"/>
+        <Node id="plannedTrip/List.xhtml" x="150" y="300" zoom="true"/>
+        <Node id="trainConsist/View.xhtml" x="400" y="450" zoom="true"/>
+        <Node id="connection/Create.xhtml" x="650" y="900" zoom="true"/>
+        <Node id="trainConsist/List.xhtml" x="650" y="600" zoom="true"/>
+        <Node id="scheduledDuty/View.xhtml" x="1150" y="450" zoom="true"/>
+        <Node id="*" x="400" y="750" zoom="false"/>
+        <Node id="dashboard/Dashboard.xhtml" x="150" y="1350" zoom="true"/>
+        <Node id="movementTripTemplate/View.xhtml" x="900" y="1050" zoom="true"/>
+        <Node id="movementTripTemplate/List.xhtml" x="650" y="1050" zoom="true"/>
+        <Node id="dashboard/AdminConfig.xhtml" x="1650" y="150" zoom="true"/>
+        <Node id="scheduledTrip/List.xhtml" x="650" y="150" zoom="true"/>
+        <Node id="generic/noauthority.xhtml" x="1150" y="900" zoom="true"/>
+        <Node id="shortTurn/List.xhtml" x="1150" y="750" zoom="true"/>
+        <Node id="scheduledService/View.xhtml" x="400" y="900" zoom="true"/>
+        <Node id="resources/openSchedule/ShortTermGlobalFilter.xhtml" x="400" y="1050" zoom="true"/>
+        <Node id="plannedTrip/ViewGraph.xhtml" x="1650" y="600" zoom="true"/>
+        <Node id="scheduleTemplate/List.xhtml" x="150" y="600" zoom="true"/>
+        <Node id="driver/List.xhtml" x="900" y="900" zoom="true"/>
+        <Node id="railml/View.xhtml" x="1400" y="150" zoom="true"/>
+        <Node id="dashboard/Dashboard2.xhtml" x="1650" y="300" zoom="true"/>
+        <Node id="template.xhtml" x="2400" y="150" zoom="true"/>
+        <Node id="dashboard/Setting.xhtml" x="400" y="600" zoom="true"/>
+        <Node id="user/List.xhtml" x="1400" y="750" zoom="true"/>
+        <Node id="report/View.xhtml" x="1900" y="150" zoom="true"/>
+        <Node id="Login.xhtml" x="1150" y="600" zoom="true"/>
+        <Node id="maintenance/View.xhtml" x="150" y="1200" zoom="true"/>
+        <Node id="vehicle/List.xhtml" x="650" y="300" zoom="true"/>
+        <Node id="trainType/List.xhtml" x="1400" y="450" zoom="true"/>
+        <Node id="scheduledService/List.xhtml" x="650" y="750" zoom="true"/>
+        <Node id="schedule/List.xhtml" x="150" y="450" zoom="true"/>
+        <Node id="vehicle/View.xhtml" x="650" y="1200" zoom="true"/>
+        <Node id="ttobjectAlt/List.xhtml" x="1150" y="300" zoom="true"/>
+    </Scope>
+    <Scope Scope="All Faces Configurations"/>
+</Scene>

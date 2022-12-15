@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!-- $Id$ -->
+<xs:schema xmlns:rail="http://www.railml.org/schemas/2011" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.railml.org/schemas/2011" elementFormDefault="qualified" version="2.1">
+
+  <xs:annotation>
+    <xs:documentation>Copyright (c) railML.org; All Rights Reserved.</xs:documentation>
+    <xs:documentation>This work is licensed under a Creative Commons Attribution 2.0 License. http://creativecommons.org/licenses/by/2.0/</xs:documentation>
+    <xs:documentation>For further information see: http://www.railml.org/</xs:documentation>
+    <xs:documentation>Content of this file: XML Schema for railML(R) 2.0 Definition of simple types, which represent railway specific units of measure and enumeration lists, used by all sub schemas</xs:documentation>
+  </xs:annotation>
+
+  <xs:include schemaLocation="physicalUnits.xsd" />
+
+  <xs:simpleType name="tMeterload">
+    <xs:annotation>
+      <xs:documentation>applies as basic type for inheritance, should not be used directly because of missing unit of measure</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+      <xs:fractionDigits value="3" fixed="true" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tMeterloadTonsPerMeter">
+    <xs:annotation>
+      <xs:documentation>generic type for load per meter values measured in ton per meter</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="rail:tMeterload" />
+  </xs:simpleType>
+
+  <xs:simpleType name="tLaxDirection">
+    <xs:annotation>
+      <xs:documentation>generic type for direction statements</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="up" />
+      <xs:enumeration value="down" />
+      <xs:enumeration value="unknown" />
+      <xs:enumeration value="none" />
+      <xs:enumeration value="both" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tExtendedDirection">
+    <xs:annotation>
+      <xs:documentation>generic type for more constrained direction statements</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="rail:tLaxDirection">
+      <xs:enumeration value="up" />
+      <xs:enumeration value="down" />
+      <xs:enumeration value="unknown" />
+      <xs:enumeration value="none" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tDelimitedDirection">
+    <xs:annotation>
+      <xs:documentation>generic type for more constrained direction statements</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="rail:tLaxDirection">
+      <xs:enumeration value="up" />
+      <xs:enumeration value="down" />
+      <xs:enumeration value="unknown" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tFlowDirection">
+    <xs:annotation>
+      <xs:documentation>extensible generic type for flow statements</xs:documentation>
+    </xs:annotation>
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="in" />
+          <xs:enumeration value="out" />
+          <xs:enumeration value="both" />
+          <xs:enumeration value="unknown" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="rail:tOtherEnumerationValue" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+
+  <xs:simpleType name="tTrainCategory">
+    <xs:annotation>
+      <xs:documentation>generic type for category names of trains; allowing digits, letters and whitespaces; length not limited</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+
+  <xs:simpleType name="tTrainAlignment">
+    <xs:annotation>
+      <xs:documentation>generic type for the alignment of a train relative to some objective in the used context</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="head" />
+      <xs:enumeration value="center" />
+      <xs:enumeration value="rear" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="tEffortNewton">
+    <xs:annotation>
+      <xs:documentation>generic type for effort values measured in newton</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="rail:tForceNewton" />
+  </xs:simpleType>
+
+</xs:schema>

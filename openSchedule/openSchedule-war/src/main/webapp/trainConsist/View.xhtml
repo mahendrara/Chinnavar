@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewTrainConsistTitle} "></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_consistid}"/>
+                    <h:outputText value="#{trainConsistController.selected.consistId}" title="#{bundle.ViewTrainConsistTitle_consistid}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_trainstate}"/>
+                    <h:outputText value="#{trainConsistController.selected.trainState}" title="#{bundle.ViewTrainConsistTitle_trainstate}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_positionid}"/>
+                    <h:outputText value="#{trainConsistController.selected.positionId}" title="#{bundle.ViewTrainConsistTitle_positionid}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_commtype}"/>
+                    <h:outputText value="#{trainConsistController.selected.commType}" title="#{bundle.ViewTrainConsistTitle_commtype}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_currentcommtype}"/>
+                    <h:outputText value="#{trainConsistController.selected.currentCommType}" title="#{bundle.ViewTrainConsistTitle_currentcommtype}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_logicallength}"/>
+                    <h:outputText value="#{trainConsistController.selected.logicalLength}" title="#{bundle.ViewTrainConsistTitle_logicallength}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_crewid}"/>
+                    <h:outputText value="#{trainConsistController.selected.crewId}" title="#{bundle.ViewTrainConsistTitle_crewid}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_comment}"/>
+                    <h:outputText value="#{trainConsistController.selected.comment}" title="#{bundle.ViewTrainConsistTitle_comment}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_traindescriber}"/>
+                    <h:outputText value="#{trainConsistController.selected.trainDescriber}" title="#{bundle.ViewTrainConsistTitle_traindescriber}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_traintypeid}"/>
+                    <h:outputText value="#{trainConsistController.selectedTrainType.description}" title="#{bundle.ViewTrainConsistTitle_traintypeid}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_reportsubsystemid}"/>
+                    <h:outputText value="#{trainConsistController.selected.reportSubsystemName}" title="#{bundle.ViewTrainConsistTitle_reportsubsystemid}"/>
+                    <h:outputText value="#{bundle.ViewTrainConsistLabel_reporttime}"/>
+                    <h:outputText value="#{trainConsistController.selected.reportTime}" title="#{bundle.ViewTrainConsistTitle_reporttime}"/>
+                </h:panelGrid>
+                </h:form>
+                <br />
+                <h:form >
+                <h:outputText rendered="#{empty trainConsistController.selected.vehicles}" value="(No Items)"/>
+                <h:dataTable rendered="#{not empty trainConsistController.selected.vehicles}" value="#{trainConsistController.selected.vehicles}" var="item" styleClass="table-nonfluid table-striped table-bordered table-hover" rules="all"  >
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_shortname}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.shortname}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_vehicleid}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.vehicleid}"/>
+                    </h:column>
+                    <ui:remove>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_vehicletype}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.vehicletype}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_vehiclesubtype}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.vehiclesubtype}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_vehiclestate}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.vehiclestate}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_commtype}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.commtype}"/>
+                    </h:column>
+                    </ui:remove>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_serialno}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.serialno}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_atoid}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.atoid}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_radioserialno}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.radioserialno}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_descripition}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.descripition}"/>
+                    </h:column>
+                    <ui:remove>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_uiimage}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.uiimage}"/>
+                    </h:column>
+                    </ui:remove>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_vehiclelength}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.vehiclelength}"/>
+                    </h:column>
+                     <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_deicingdevice}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.deicingdevice}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_usercomment}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.usercomment}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_connectionorder}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.connectionorder}"/>
+                    </h:column>
+                </h:dataTable>
+                <br />
+                <br />
+                <h:commandLink action="#{trainConsistController.destroyAndView}" value="#{bundle.ViewTrainConsistDestroyLink}"/>
+                <br />
+                <br />
+                <h:commandLink action="Edit" value="#{bundle.ViewTrainConsistEditLink}"/>
+                <br />
+                <h:commandLink action="#{trainConsistController.prepareCreate}" value="#{bundle.ViewTrainConsistCreateLink}" />
+                <br />
+                <h:commandLink action="#{trainConsistController.prepareList}" value="#{bundle.ViewTrainConsistShowAllLink}"/>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

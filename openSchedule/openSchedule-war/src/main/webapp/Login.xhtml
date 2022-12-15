@@ -1,0 +1,90 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>#{bundle.LoginTitle}</title>
+        <link rel="stylesheet" type="text/css" href="/openSchedule-war/resources/css/default.css"></link>
+        <link rel="stylesheet" type="text/css" href="/openSchedule-war/resources/css/bootstrap.min.css"></link>
+
+        <script type="text/javascript" src="/openSchedule-war/resources/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/openSchedule-war/resources/js/bootstrap.min.js"></script>
+    </h:head>
+    <f:view locale="#{languageBean.locale}">
+        <h:body>
+            <h:form id="loginForm">
+                <div class="navbar navbar-fixed-top">
+                    <div class="inner">
+                        <div class="nav-collapse collapse navbar-responsive-collapse"> 
+                            <ul class="nav navbar-nav"> 
+                                <li class="logo">
+                                    <img src="/openSchedule-war/resources/img/bombardier.jpg" class='logo_img pull-left'></img>
+                                    <h2 class="pull-left">#{bundle.Title}</h2>
+                                </li>
+                            </ul>
+                            <ul class="nav pull-right">
+                                <li class="main_menu dropdown pull-right">
+                                    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                        <i></i> #{languageBean.localeCode} <b class="caret"></b>              
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <ui:repeat value="#{languageBean.localeCodes.keySet().toArray()}" var="locale">
+                                            <li>
+                                                <h:commandLink action="#{languageBean.setLocaleCode(locale)}" value="#{locale}" ></h:commandLink>
+                                            </li>
+                                        </ui:repeat>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                <div class='main_content'>
+                    <div class='widget-login'>
+                        <div class ='widget-login-head' id="loginheader">
+                            <h:outputLabel rendered="#{!loginBean.userLoggedIn}">#{bundle.LoginPleaseLogin}</h:outputLabel>
+                            <h:outputLabel rendered="#{loginBean.userLoggedIn}">#{bundle.LoginCurrentlyLoggedIn} #{loginBean.userName} </h:outputLabel>
+                            <h:outputLabel rendered="#{loginBean.userLoggedIn}">(#{loginBean.loginTime})
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:outputLabel>
+                        </div>
+                        <div class ='widget-login-content' id="loginarea">
+              
+                                <h:panelGrid  columns="2" rendered="#{!loginBean.userLoggedIn}">
+                                    <h:outputLabel class="control-label" for="username">#{bundle.LoginAccount}</h:outputLabel>
+                                    <h:inputText class="form-control" id="username" value="#{loginBean.userName}"/>
+                                    <h:outputLabel class="control-label" for="password">#{bundle.LoginPassword}</h:outputLabel>
+                                    <h:inputSecret class="form-control" id="password" value="#{loginBean.passWord}"/>
+                                    <label></label>
+                                    <h:commandButton id="loginButton" class="btn btn-default" value="#{bundle.LoginLogin}" action="#{loginBean.loginAction}" rendered="#{!loginBean.userLoggedIn}"/>
+                                </h:panelGrid>
+                                <div class='text-center'>
+                                    <h:commandButton id="logoutButton" class="btn btn-default" value="#{bundle.LoginLogout}" action="#{loginBean.logoutAction}" rendered="#{loginBean.userLoggedIn}"/>
+                                    <h:commandButton id="backButton" class="btn btn-default" value="#{bundle.LoginBack}" action="go-to-mainpage" rendered="#{loginBean.userLoggedIn}"/>
+                                </div>
+                            
+                        </div>
+                    </div>
+                    <center><i>#{bundle.UnauthorizedUseMessage}</i><br></br>
+                        <h:outputText value="#{bundle.Version}" class="float:left"/>
+                        <h:outputText value="#{loginBean.version}"/>
+                        <!--<img alt="company-logo" src="resources/img/login-logo.png" style="border: 5px solid black"></img>-->
+                    </center>
+                    <center>
+                        <h:panelGroup id="messagePanel" layout="block">
+                            <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+                        </h:panelGroup>
+                    </center>
+                </div>
+
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
+

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListMovementTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:panelGrid id="panelGrid1" columns="4">
+                <h:outputText value="#{bundle.ListMovementLabel_Movement} "/>
+                <h:selectOneMenu value="#{movementTripController.selectedTripMainType}" styleClass="form-control" converter="#{tripTypeConverter}">
+                    <f:selectItems value="#{movementTripController.possibleTripMainTypes}" var="tripTypeItem" itemLabel="#{tripTypeItem.getText(languageBean.OSLocale)}" itemValue="#{tripTypeItem}"/>
+                    <p:ajax  process="@this" />
+                </h:selectOneMenu>
+                <h:selectOneMenu id="tripTypes" value="#{movementTripController.selectedTripType}" styleClass="form-control" converter="#{tripTypeConverter}">
+                    <f:selectItems value="#{movementTripController.possibleTripTypes}" var="tripTypeItem" itemLabel="#{tripTypeItem.getText(languageBean.OSLocale)}" itemValue="#{tripTypeItem}"/>
+                    <p:ajax process="@this" />
+                </h:selectOneMenu>
+                <h:commandLink styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not movementTripController.addTripTemplateAllowed}">
+                    <p:ajax listener="#{movementTripController.addNew}" update="panelGroup1 @this" />
+                </h:commandLink>
+            </h:panelGrid>
+            <h:panelGroup id="panelGroup1">
+                <h:outputText value="#{movementTripController.pagination.pageFirstItem + 1}..#{movementTripController.pagination.pageLastItem + 1}/#{movementTripController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink action="#{movementTripController.previous}" value="#{bundle.Previous} #{movementTripController.pagination.pageSize}" rendered="#{movementTripController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink action="#{movementTripController.next}" value="#{bundle.Next} #{movementTripController.pagination.pageSize}" rendered="#{movementTripController.pagination.hasNextPage}"/>&nbsp;
+                <h:dataTable id="templateT" value="#{movementTripController.items}" var="item" styleClass="table table-nonfluid table-striped table-bordered table-hover" rules="all">
+                    <h:column rendered="false">
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_tripid}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.tripId}" rendered="#{not item.editing}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_description}"/>
+                        </f:facet>
+                        <h:panelGroup id="descriptionP">
+                            <h:outputText value="#{item.description}" rendered="#{not item.editing}"/>
+                            <h:inputText value="#{item.description}" rendered="#{item.editing}" styleClass="form-control" required="true" requiredMessage="#{bundle.RequiredMessage_description}"/>
+                        </h:panelGroup>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_triptype}"/>
+                             <br/>
+                            <h:selectOneMenu value="#{movementTripController.selectedTripTypeFilter}" class="form-control" converter="#{tripTypeConverter}">
+                                <f:selectItem itemLabel="#{movementTripController.tripTypeAllFilter.description}" itemValue="#{movementTripController.tripTypeAllFilter}"></f:selectItem>
+                                <f:selectItems value="#{movementTripController.tripTypesFilter}" var="tripType" itemLabel="#{tripType.getText(languageBean.OSLocale)}" itemValue="#{tripType}"/>
+                                <p:ajax update="@form" process="@this" listener="#{movementTripController.filterChanged}" />
+                            </h:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{item.tripType.getText(languageBean.OSLocale)}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_area}"/>
+                            <br />
+                            <h:panelGroup>
+                                <h:selectOneMenu value="#{movementTripController.selectedArea}" styleClass="form-control" converter="#{TTObjectConverter}">
+                                    <f:selectItems value="#{movementTripController.areas}" var="areaItem" itemLabel="#{areaItem.getText(languageBean.OSLocale)}" itemValue="#{areaItem}">
+                                    </f:selectItems>
+                                    <p:ajax listener="#{movementTripController.filterChanged}" update="@form" />
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </f:facet>
+
+                        <h:panelGroup id="areaP">
+                            <h:outputText value="#{item.areaObj.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu value="#{item.areaObj}" rendered="#{item.editing}" styleClass="form-control" converter="#{TTObjectConverter}">
+                                <f:selectItems value="#{movementTripController.areas}" var="areaItem" itemLabel="#{areaItem.getText(languageBean.OSLocale)}" itemValue="#{areaItem}">
+                                </f:selectItems>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_plannedStartObj}"/>
+                        </f:facet>
+
+                        <h:panelGroup id="startObjP">
+                            <h:outputText value="#{item.plannedStartObj.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu rendered="#{item.editing}" class="form-control" value="#{movementTripController.selectedFromTTObjectType}" converter="#{TTObjectTypeConverter}">
+                                <f:selectItems var="objtype" value="#{movementTripController.possibleFromTTObjectTypes}" itemLabel="#{objtype.getText(languageBean.OSLocale)}" itemValue="#{objtype}"/>
+                                <p:ajax update="possibleLocations1" process="@this" />
+                            </h:selectOneMenu>
+                            <h:selectOneMenu id="possibleLocations1" rendered="#{item.editing}" class="form-control" value="#{item.plannedStartObj}" converter="#{TTObjectConverter}" required="true" requiredMessage="#{bundle.RequiredMessage_from}">
+                                <f:selectItems var="location" value="#{movementTripController.possibleFromLocations}" itemLabel="#{location.getText(languageBean.OSLocale)}" itemValue="#{location}"/>
+                                <p:ajax update="stopObjP" process="@this stopObjP" listener="#{movementTripController.fromLocationChanged}" />
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_plannedStopObj}"/>
+                        </f:facet>
+
+                        <h:panelGroup id="stopObjP" rendered="#{item.tripType.tripSubType == 1}">
+                            <h:outputText value="#{item.plannedStopObj.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu rendered="#{item.editing and item.tripType.tripSubType != MovementTripSubType.FORMATION.value}" class="form-control" value="#{movementTripController.selectedToTTObjectType}" converter="#{TTObjectTypeConverter}">
+                                <f:selectItems var="objtype" value="#{movementTripController.possibleToTTObjectTypes}" itemLabel="#{objtype.getText(languageBean.OSLocale)}" itemValue="#{objtype}"/>
+                                <p:ajax update="possibleLocations2" process="@this" />
+                            </h:selectOneMenu>
+                            <h:selectOneMenu id="possibleLocations2" rendered="#{item.editing and item.tripType.tripSubType != MovementTripSubType.FORMATION.value}" class="form-control" value="#{item.plannedStopObj}" converter="#{TTObjectConverter}" required="true" requiredMessage="#{bundle.RequiredMessage_to}">
+                                <f:selectItems var="location" value="#{movementTripController.possibleToLocations}" itemLabel="#{location.getText(languageBean.OSLocale)}" itemValue="#{location}"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </h:column>
+                    <!--<h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListTripTitle_numberOfActions}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.numberOfActions}"/>
+                    </h:column>-->
+                    <ui:remove>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTripTitle_duration}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.duration}">
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTripTitle_origoSecs}"/>
+                            </f:facet>
+
+                            <h:panelGroup id="origoP">
+                                <h:outputText value="#{item.origo}" rendered="#{not item.editing}"/>
+                                <h:inputText styleClass=" form-control" rendered="#{item.editing}" maxlength="8" size="6" value="#{item.origo}" required="true" requiredMessage="#{bundle.CreateTripRequiredMessage_origoSecs}"/>
+                            </h:panelGroup>
+                        </h:column>
+                    </ui:remove>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:panelGroup id="commandLinkP">
+                            <h:commandLink id="detail" styleClass="icon-search" title="#{bundle.Tooltip_View}" rendered="#{not item.editing}" action="#{movementTripController.prepareView}">
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink immediate="true" styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not item.editing}">
+                                <p:ajax update=":form1:messagePanel :form1:panelGrid1 templateT:descriptionP templateT:areaP templateT:startObjP templateT:stopObjP templateT:commandLinkP" listener="#{movementTripController.activateEdit}" />
+                            </h:commandLink>
+                            <h:commandLink styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{item.editing}" onclick="if (onChange('#{movementTripController.getUsedBy(item)}', '#{bundle.ConfirmBeforeEditing3}', '#{bundle.ConfirmBeforeEditing4}')) return true; else return false;">
+                                <p:ajax update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel :form1:panelGrid1" process="@this templateT:descriptionP templateT:areaP templateT:startObjP templateT:stopObjP" listener="#{movementTripController.save}" />
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink immediate="true" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" rendered="#{item.editing and !item.creating}">
+                                <p:ajax event="click" update=":form1:panelGrid1 templateT:descriptionP templateT:areaP templateT:startObjP templateT:stopObjP templateT:commandLinkP" listener="#{movementTripController.cancel}" />
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink immediate="true" styleClass="icon-remove" rendered="#{item.creating or not item.editing}" title="#{bundle.Tooltip_Delete}"   onclick="if (onDelete('#{movementTripController.getUsedBy(item)}' ,'#{item.creating}', '#{bundle.ConfirmBeforeDelete4}', '#{bundle.ConfirmBeforeDelete3}','#{bundle.ConfirmBeforeDelete}'))
+                                        return true; else return false;" >
+                                <p:ajax render=":form1:panelGrid1 :form1:panelGroup1 :form1:messagePanel"  listener="#{movementTripController.destroy}"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink id="clone" styleClass="icon-copy" title="#{bundle.Tooltip_Clone}" rendered="#{not item.editing}">
+                                <p:ajax event="click" />
+                            </h:commandLink>
+                            <p:overlayPanel for="clone" id="cloneOverlay" style='border:none;width:300px'>
+                                <p:panelGrid columns="2">
+                                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_description}"></h:outputText>
+                                    <h:inputText id="descInput" styleClass="form-control" value="#{movementTripController.clonedDescription}"/>
+                                </p:panelGrid>
+                                <h:commandLink value="#{bundle.Tooltip_Clone}" rendered="#{!item.editing}">
+                                    <p:ajax event="click" process="@this templateT:descInput" update=":form1:messagePanel :form1:panelGroup1" listener="#{movementTripController.cloneMovementTrip}" />
+                                </h:commandLink>
+                            </p:overlayPanel>
+                        </h:panelGroup>
+
+                    </h:column>
+                </h:dataTable>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+
+</html>

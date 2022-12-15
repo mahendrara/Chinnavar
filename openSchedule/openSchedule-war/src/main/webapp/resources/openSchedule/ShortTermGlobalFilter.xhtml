@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="areaChangeListener" method-signature="void listener()" />
+        <cc:attribute name="renderStationFilter" default="false"></cc:attribute>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div id="filterControl" class="panel panel-default">
+            <div class="panel-body form-inline">
+                <h:panelGrid columns="2" style="float:left; margin-right: 10px;">
+                    <h:outputText value="#{bundle.Filter_Date}"/>
+                    <h:inputText id="dateFilter" label="#{bundle.DateTime_Date}" styleClass="calendar1 form-control" onchange="submit();" value="#{shortTermFilterController.dateFilter}" valueChangeListener="#{shortTermFilterController.dateFilterChanged}" onfocus="initCalendar('#{languageBean.localeCodeForCalendar}', '#{bundle.DAYTYPE_PATTERN}')">
+                        <f:convertDateTime type="date"/>
+                    </h:inputText>
+                </h:panelGrid>
+
+                <h:outputText value="#{bundle.Filter_Area}"></h:outputText>
+                <h:selectOneMenu  value="#{shortTermFilterController.selectedArea}" styleClass="form-control"  converter="#{TTObjectConverter}" onchange="submit()" valueChangeListener="#{shortTermFilterController.selectedAreaChanged}">
+                    <f:selectItems value="#{shortTermFilterController.areaFilter}" var="area" itemLabel="#{area.getText(languageBean.OSLocale)}" itemValue="#{area}"/>
+                </h:selectOneMenu>
+
+                <h:outputText value="#{bundle.Filter_StartFrom}" rendered="#{cc.attrs.renderStationFilter}"></h:outputText>
+                <h:panelGroup rendered="#{cc.attrs.renderStationFilter}">
+                    <h:selectOneMenu styleClass="form-control" value="#{shortTermFilterController.selectedStartTTObjectType}" converter="#{TTObjectTypeConverter}" onchange="submit()" valueChangeListener="#{shortTermFilterController.selectedStartTTObjectTypeChanged}">
+                        <f:selectItem itemLabel="#{shortTermFilterController.startTTObjectTypeAll.description}" itemValue="#{shortTermFilterController.startTTObjectTypeAll}"></f:selectItem>
+                        <f:selectItems var="objtype" value="#{shortTermFilterController.possibleStartTTObjectTypes}" itemLabel="#{objtype.getText(languageBean.OSLocale)}" itemValue="#{objtype}"/>
+                    </h:selectOneMenu>
+                    <h:selectOneMenu class="form-control" value="#{shortTermFilterController.selectedStartTTObject}" rendered="#{shortTermFilterController.possibleStartTTObjectsAvailable}" converter="#{TTObjectConverter}" onchange="submit()" valueChangeListener="#{shortTermFilterController.selectedStartTTObjectChanged}">
+                        <f:selectItems var="location" value="#{shortTermFilterController.possibleStartTTObjects}" itemLabel="#{location.getText(languageBean.OSLocale)}" itemValue="#{location}"/>
+                    </h:selectOneMenu>
+                </h:panelGroup>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function() {
+                initCalendar('#{languageBean.locale.toLanguageTag()}', '#{bundle.DAYTYPE_PATTERN}');
+                initTimePicker('#{languageBean.locale.displayLanguage}');
+            });
+        </script>
+    </cc:implementation>
+</html>

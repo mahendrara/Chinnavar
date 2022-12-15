@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="submenu">
+            <h:commandButton class="btn btn-default" value="Trains" action="trains_info"/>
+        </ui:define>
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListVehicleTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:panelGroup>
+                <h:outputText value="#{vehicleController.pagination.pageFirstItem + 1}..#{vehicleController.pagination.pageLastItem + 1}/#{vehicleController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink action="#{vehicleController.previous}" value="#{bundle.Previous} #{vehicleController.pagination.pageSize}" rendered="#{vehicleController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink action="#{vehicleController.next}" value="#{bundle.Next} #{vehicleController.pagination.pageSize}" rendered="#{vehicleController.pagination.hasNextPage}"/>&nbsp;
+                <h:dataTable value="#{vehicleController.items}" var="item" styleClass="table-nonfluid table-striped table-bordered table-hover" rules="all" >
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_shortname}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.shortname}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_vehicleid}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.vehicleid}"/>
+                    </h:column>
+                    <ui:remove>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListVehicleTitle_vehicletype}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.vehicletype}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListVehicleTitle_vehiclesubtype}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.vehiclesubtype}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListVehicleTitle_vehiclestate}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.vehiclestate}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListVehicleTitle_commtype}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.commtype}"/>
+                        </h:column>
+                    </ui:remove>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_serialno}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.serialno}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_atoid}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.atoid}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_radioserialno}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.radioserialno}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_descripition}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.descripition}"/>
+                    </h:column>
+                    <ui:remove>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListVehicleTitle_uiimage}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.uiimage}"/>
+                        </h:column>
+                    </ui:remove>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_vehiclelength}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.vehiclelength}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_deicingdevice}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.deicingdevice}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_usercomment}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.usercomment}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_currenttrain}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.trainConsist.traindescriber}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListVehicleTitle_connectionorder}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.connectionorder}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:commandLink styleClass="icon-search" title="#{bundle.Tooltip_View}" action="#{vehicleController.prepareView}">
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" action="#{vehicleController.prepareEdit}" disabled="true"/>
+                        <h:outputText value=" "/>
+                        <h:commandLink styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" action="#{vehicleController.destroy}" immediate="true" disabled="true"/>
+                    </h:column>
+                </h:dataTable>
+            </h:panelGroup>
+            <br />
+            <h:commandLink action="#{vehicleController.prepareCreate}" value="#{bundle.ListVehicleCreateLink}"/>
+        </ui:define>
+    </ui:composition>
+
+</html>

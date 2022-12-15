@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewTTObjectTitle} "></h:outputText>
+            <h:outputText value="#{TTLocationGroupsController.selected.getText(languageBean.OSLocale)}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+
+            <p:panel id="itemDecription" style="border:none;">
+                <h:panelGrid columns="2">
+                    <h:outputText value="#{bundle.ListTTObjectLabel_scheduleName}"/>
+                    <h:outputText value="#{TTLocationGroupsController.selected.scheduleName}"/>
+
+                    <h:outputText value="#{bundle.ListTTObjectLabel_externalName}"/>
+                    <h:outputText value="#{TTLocationGroupsController.selected.externalName}"/>
+
+                    <h:outputText value="#{bundle.ListTTObjectLabel_objectType}"/>
+                    <h:outputText value="#{TTLocationGroupsController.selected.TTObjectType.getText(languageBean.OSLocale)}"/>
+
+                    <h:outputText value="#{bundle.ListTTObjectLabel_description}"/>
+                    <h:outputText value="#{TTLocationGroupsController.selected.getText(languageBean.OSLocale)}"/>
+
+                    <h:outputText value="#{bundle.ListTTObjectLabel_numberOfChildren}"/>
+                    <h:outputText value="#{TTLocationGroupsController.selected.childCount}"/>
+                </h:panelGrid>
+            </p:panel>
+            
+            <h:panelGroup id="messagePanel1" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            
+            <p:tabView id="tabs" dynamic="true" cache="false">
+                <p:tab id="tab" title="#{bundle.ViewTTObjectTitle_TTObjects}">
+                    
+                    <h:panelGrid columns="6">
+                        <h:outputText value="#{bundle.ViewLocationGroupLabel_add}"/>
+                        
+                        <h:selectOneMenu id="childTypeMenu" value="#{TTLocationGroupsController.selectedObjectType}" class="form-control" converter="#{TTObjectTypeConverter}">
+                            <f:selectItems value="#{TTLocationGroupsController.objectTypes}" var="TTObjectType" itemLabel="#{TTObjectType.getText(languageBean.OSLocale)}" itemValue="#{TTObjectType}">
+                            </f:selectItems>
+                            <p:ajax update="ttObjects addButton priorities" process="@this" listener="#{TTLocationGroupsController.selectedObjectTypeChanged}" />
+                        </h:selectOneMenu>
+                        
+                        <h:selectOneMenu id="ttObjects" value="#{TTLocationGroupsController.selectedObject}" class="form-control" converter="#{TTObjectConverter}">
+                            <f:selectItems value="#{TTLocationGroupsController.ttObjects}" var="TTObject" itemLabel="#{TTObject.getText(languageBean.OSLocale)}" itemValue="#{TTObject}">
+                            </f:selectItems>
+                            <p:ajax update="addButton priorities" process="@this" listener="#{TTLocationGroupsController.selectedObjectChanged}" />
+                        </h:selectOneMenu>
+                        
+                        <h:outputText value="&nbsp;#{bundle.ViewLocationGroupLabel_priority}&nbsp;"/>
+                        <h:selectOneMenu id="priorities" value="#{TTLocationGroupsController.selectedPriority}" class="form-control" converter="javax.faces.Integer">
+                            <f:selectItems value="#{TTLocationGroupsController.priorities}" var="Priority" itemLabel="#{Priority}" itemValue="#{Priority}">
+                            </f:selectItems>
+                            <p:ajax process="@this" listener="#{TTLocationGroupsController.selectedObjectChanged}" />
+                        </h:selectOneMenu>
+                        
+                        <h:commandLink id="addButton" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not TTLocationGroupsController.addChildObjectAllowed}">
+                            <p:ajax listener="#{TTLocationGroupsController.addNewChild}" update="pChildObjects itemDecription @this :form1:messagePanel1" onevent="onAjaxUpdate" />
+                        </h:commandLink>
+                    </h:panelGrid>
+                    
+                    <br />
+                    
+                    <h:dataTable id="pChildObjects" value="#{TTLocationGroupsController.selectedChildObjects}" var="item" styleClass="table table-nonfluid table-striped table-bordered table-hover" rules="all" >
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTTObjectTitle_scheduleName}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.scheduleName}"/>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTTObjectTitle_externalName}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.externalName}"/>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTTObjectTitle_objectType}"/>
+                                <br/>
+                                <h:selectOneMenu id="objectTypeFilter" value="#{TTLocationGroupsController.selectedTTObjectType}" class="form-control" converter="#{TTObjectTypeConverter}">
+                                    <f:selectItem itemLabel="#{TTLocationGroupsController.objectTypeAll.description}" itemValue="#{TTLocationGroupsController.objectTypeAll}"></f:selectItem>
+                                    <f:selectItems value="#{TTLocationGroupsController.childTTObjectTypes}" var="objectType" itemLabel="#{objectType.getText(languageBean.OSLocale)}" itemValue="#{objectType}"/>
+                                    <f:ajax render="@form" execute="@this" listener="#{TTLocationGroupsController.resetPagination()}"></f:ajax>
+                                </h:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{item.TTObjectType.getText(languageBean.OSLocale)}"/>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTTObjectTitle_description}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.getText(languageBean.OSLocale)}"/>
+                        </h:column>
+                        
+                        <h:column headerClass="tripTemplateCol1">
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTTObjectTitle_numberOfChildren}"/>
+                            </f:facet>
+                            <h:outputText value="#{item.childCount}"/>
+                        </h:column>
+                        
+                        <h:column >
+                            <f:facet name="header">
+                                <h:outputText value="#{bundle.ListTTHierarchyTitle_priority}"/>
+                            </f:facet>
+                            <h:outputText value="#{TTLocationGroupsController.getChildPriority(item)}"/>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="&nbsp;"/>
+                            </f:facet>
+                            
+                            <h:commandLink id="detail" styleClass="icon-search" title="#{bundle.Tooltip_View}" disabled="#{ item.childCount == 0}" action="#{TTLocationGroupsController.prepareView(item)}"/>
+                        
+                            <f:facet name="header">
+                                <h:outputText value="&nbsp;"/>
+                            </f:facet>
+                            
+                            <h:commandLink id="remove" styleClass="icon-minus" title="#{bundle.Tooltip_RemoveFromGroup}" action="#{TTLocationGroupsController.removeSelectedChild(TTLocationGroupsController.selected, item)}"/>
+                        
+                        </h:column>
+                        
+                    </h:dataTable>
+                </p:tab>
+            </p:tabView>
+        </ui:define>
+    </ui:composition>
+</html>

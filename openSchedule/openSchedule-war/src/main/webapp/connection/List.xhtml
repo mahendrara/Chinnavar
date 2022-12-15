@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListConnectionTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <table>
+                <tr>
+                    <td style="background-color: #FFFFFF;border : 1px solid black">
+                        <h:commandLink action="#{connectionController.showAll}" value="All connections">
+                        </h:commandLink>
+                    </td>
+                    <td style="background-color: #FFFFFF;border : 1px solid black">
+                        <h:commandLink action="#{connectionController.showPassenger}" value="Passenger connections">
+                        </h:commandLink>
+                    </td>
+                    <td style="background-color: #FFFFFF;border : 1px solid black">
+                        <h:commandLink action="#{connectionController.showCrew}" value="Crew connections">
+                        </h:commandLink>
+                    </td>
+                    <td style="background-color: #FFFFFF;border : 1px solid black">
+                        <h:commandLink action="#{connectionController.showVehicle}" value="Vehicle connections">
+                        </h:commandLink>
+                    </td>
+                </tr>     
+            </table>     
+            <h:panelGroup>
+                <h:outputText value="#{connectionController.pagination.pageFirstItem + 1}..#{connectionController.pagination.pageLastItem + 1}/#{connectionController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink action="#{connectionController.previous}" value="#{bundle.Previous} #{connectionController.pagination.pageSize}" rendered="#{connectionController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink action="#{connectionController.next}" value="#{bundle.Next} #{connectionController.pagination.pageSize}" rendered="#{connectionController.pagination.hasNextPage}"/>&nbsp;
+                <h:dataTable value="#{connectionController.items}" var="item" styleClass="table-nonfluid table-striped table-bordered table-hover" rules="all" >
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="todo Connection type"/>
+                        </f:facet>
+                        <h:commandLink action="#{connectionController.prepareView}" value="#{item.classDescription}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="todo Source"/>
+                        </f:facet>
+                        <h:outputText value="#{item.sourceTrip.description}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="todo Source"/>
+                        </f:facet>
+                        <h:outputText value="#{item.sourceTripAction.mainObjectName} #{item.sourceTripAction.description}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="todo Target"/>
+                        </f:facet>
+                        <h:outputText value="#{item.targetTrip.description}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="todo Target"/>
+                        </f:facet>
+                        <h:outputText value="#{item.targetTripAction.mainObjectName} #{item.targetTripAction.description}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListConnectionTitle_connType}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.connType}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListConnectionTitle_connStatus}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.connStatus}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListConnectionTitle_dayTypeId}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.dayTypeId}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListConnectionTitle_scheduleddaycode}"/>
+                        </f:facet>
+                        <h:outputText value="#{item.scheduledDayCode}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListConnectionTitle_minOverlap}"/>
+                        </f:facet>
+                        <h:outputText rendered="#{item.minOverlap!=null}" value="#{item.minOverlap}s"/>
+                        <h:outputText rendered="#{item.minOverlap==null}" value="-"/>
+                    </h:column>
+                    <ui:remove>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="&nbsp;"/>
+                            </f:facet>
+                            <h:commandLink action="#{connectionController.prepareView}" value="#{bundle.ListConnectionViewLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{connectionController.prepareEdit}" value="#{bundle.ListConnectionEditLink}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink action="#{connectionController.destroy}" value="#{bundle.ListConnectionDestroyLink}"/>
+                        </h:column>
+                    </ui:remove>    
+                </h:dataTable>
+            </h:panelGroup>
+            <br />
+            <ui:remove>
+                <h:commandLink action="#{connectionController.prepareCreate}" value="#{bundle.ListConnectionCreateLink}"/>
+            </ui:remove>
+            <h:commandLink action="#{connectionController.prepareCreate}" value="Create passenger connection"/>
+            <h:outputText value=" "/>
+            <h:commandLink action="#{connectionController.prepareCreate}" value="Create crew connection"/>
+            <h:outputText value=" "/>
+            <h:commandLink action="#{connectionController.prepareCreate}" value="Create vehicle connection"/>
+        </ui:define>
+    </ui:composition>
+
+</html>

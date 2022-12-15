@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListScheduleTemplateTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block" styleClass="alert-info">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:panelGrid id="panelGrid1" columns="1" >
+                <h:commandLink id="addButton" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not scheduleTemplateController.isAddAllowed()}">
+                    <p:ajax event="click" update="panelGroup1 @this" listener="#{scheduleTemplateController.addNew}" />
+                </h:commandLink>
+            </h:panelGrid>
+            <h:panelGroup id="panelGroup1">
+                <h:outputText value="#{scheduleTemplateController.pagination.pageFirstItem + 1}..#{scheduleTemplateController.pagination.pageLastItem + 1}/#{scheduleTemplateController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink action="#{scheduleTemplateController.previous}" value="#{bundle.Previous} #{scheduleTemplateController.pagination.pageSize}" rendered="#{scheduleTemplateController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink action="#{scheduleTemplateController.next}" value="#{bundle.Next} #{scheduleTemplateController.pagination.pageSize}" rendered="#{scheduleTemplateController.pagination.hasNextPage}"/>&nbsp;
+                <p:dataTable id="scheduleTemplateList" value="#{scheduleTemplateController.items}" var="item" tableStyle="width:auto" expandedRow="#{item.editing and not item.creating}" styleClass="table table-nonfluid table-striped table-hover">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduleTemplateTitle_description}" />
+                        </f:facet>
+                        <h:panelGroup id="desc">
+                            <h:outputText value="#{item.description}" rendered="#{not item.editing}"/>
+                            <h:inputText id="descriptionInput" value="#{item.description}" styleClass="form-control" rendered="#{item.editing}" required="true" requiredMessage="#{bundle.RequiredMessage_description}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column rendered="false">
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduleTemplateTitle_valid}"/>
+                        </f:facet>
+                        <h:panelGroup id="valid">
+                            <h:selectBooleanCheckbox id="validCheckbox" value="#{item.valid}" disabled="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+
+                        <h:panelGroup id="detailsButton" pt:title="#{bundle.Tooltip_View}" layout="block" style="color: #428bca !important;" class="icon-search ui-row-toggler" rendered="#{not item.editing}"/>
+                        <h:panelGroup pt:title="#{bundle.Tooltip_View}" layout="block" class="icon-search" rendered="#{item.editing}"/>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="editButton" styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not item.editing}">
+                            <p:ajax event="click" process="@this desc valid detailPanel" update=":form1:panelGroup1 :form1:messagePanel :form1:panelGrid1" listener="#{scheduleTemplateController.activateEdit(item)}"/>
+                        </h:commandLink>
+                        <h:commandLink id="saveButton" styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{item.editing}">
+                            <p:ajax event="click" process="@this desc valid detailPanel" update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel :form1:panelGrid1" listener="#{scheduleTemplateController.save(item)}"/>
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="cancelButton" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" immediate="true" rendered="#{item.editing and !item.creating}">
+                            <p:ajax event="click" update=":form1:panelGroup1 :form1:messagePanel :form1:panelGrid1" listener="#{scheduleTemplateController.cancel(item)}"/>
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="deleteButton" styleClass="icon-remove" rendered="#{item.creating or not item.editing}" title="#{bundle.Tooltip_Delete}">
+                            <p:ajax event="click" update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel" listener="#{scheduleTemplateController.destroy}"/>
+                        </h:commandLink>
+                    </p:column>
+                    <p:rowExpansion>
+                        <p:panel id="detailPanel" style="border: none;">
+                            <div style="float:left;margin:15px">
+                                <h5><h:outputText value="#{bundle.ViewScheduleTemplateTitle2}"></h:outputText></h5>
+                                <h:commandLink id="addNewDayType" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not scheduleTemplateController.isAddDayTypeAllowed(item)}">
+                                    <p:ajax event="click" update="dayTypeTable @this" listener="#{scheduleTemplateController.addNewDayType(item)}" />
+                                </h:commandLink>
+                                <p:dataTable id="dayTypeTable" value="#{item.dayTypes}" var="dayTypeItem" tableStyle="width:auto" styleClass="table table-nonfluid table-striped table-hover" >
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="#{bundle.ViewScheduleTitle_daytypeshort}"/>
+                                        </f:facet>
+                                        <h:panelGroup id="abbrP">
+                                            <h:outputText id="abbr" value="#{dayTypeItem.abbr}" rendered="#{not dayTypeItem.editing}"/>
+                                            <h:inputText id="abbrInput" value="#{dayTypeItem.abbr}" class="form-control" maxlength="16" rendered="#{dayTypeItem.editing}" required="true" requiredMessage="#{bundle.RequiredMessage_daytype}"/>
+                                        </h:panelGroup>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="#{bundle.ViewScheduleTemplateTitle_description}"/>
+                                        </f:facet>
+                                        <h:panelGroup id="descP">
+                                            <h:outputText id="desc" value="#{dayTypeItem.description}" rendered="#{not dayTypeItem.editing}"/>
+                                            <h:inputText id="dayDescInput" value="#{dayTypeItem.description}" class="form-control" maxlength="32" rendered="#{dayTypeItem.editing}" required="true" requiredMessage="#{bundle.RequiredMessage_description}"/>
+                                        </h:panelGroup>
+                                    </p:column>
+                                    <p:column>
+                                        <h:panelGroup id="commandLinkP">
+                                            <f:facet name="header">
+                                                <h:outputText value="&nbsp;"/>
+                                            </f:facet>
+                                            <h:commandLink id="editTypeButton" styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not dayTypeItem.editing}">
+                                                <p:ajax event="click" update="abbrP descP commandLinkP :form1:panelGrid1" listener="#{scheduleTemplateController.activateEditDayType(item,dayTypeItem)}"/>
+                                            </h:commandLink>
+                                            <h:commandLink id="saveDayButton" styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{dayTypeItem.editing}">
+                                                <p:ajax event="click" process="@this abbrP descP" update=":form1:scheduleTemplateList:detailPanel :form1:messagePanel :form1:panelGrid1" listener="#{scheduleTemplateController.saveDayType(item, dayTypeItem)}"/>
+                                            </h:commandLink>
+                                            <h:outputText value=" "/>
+                                            <h:commandLink id="cancelDayButton" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" rendered="#{dayTypeItem.editing and !dayTypeItem.creating}">
+                                                <p:ajax event="click" update="abbrP descP commandLinkP :form1:messagePanel :form1:panelGrid1" listener="#{scheduleTemplateController.cancelDayType(item, dayTypeItem)}"/>
+                                            </h:commandLink>
+                                            <h:outputText value=" "/>
+                                            <h:commandLink id="deleteDayButton" styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" rendered="#{dayTypeItem.creating or not dayTypeItem.editing}" immediate="true">
+                                                <p:ajax event="click" update=":form1:scheduleTemplateList:detailPanel :form1:messagePanel :form1:panelGrid1" listener="#{scheduleTemplateController.destroyDayType(item, dayTypeItem)}" />
+                                            </h:commandLink>
+                                        </h:panelGroup>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div style="float:left;margin:15px">
+                                <h5><h:outputText value="#{bundle.ViewScheduleTemplateTitle}"></h:outputText></h5>
+                                <p:dataTable value="#{item.defaultDayRules}" id="dayruleTable" var="ruleItem" tableStyle="width:auto" styleClass="table table-nonfluid table-striped table-hover">
+                                    <p:column rendered="false">
+                                        <f:facet name="header">
+                                            <h:outputText value=""/>
+                                        </f:facet>
+                                        <h:outputText value="#{ruleItem.defaultRuleId}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="#{bundle.ViewScheduleTemplateTitle_weekday}"/>
+                                        </f:facet>
+                                        <h:outputText value="#{ruleItem.weekdayNo}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="#{bundle.ViewScheduleTemplateTitle_abbr}"/>
+                                        </f:facet>
+                                        <h:panelGroup id="dayTypeAbbr">
+                                            <h:outputText  value="#{ruleItem.dayType.abbr}" rendered="#{ruleItem.dayType != null and not ruleItem.editing}"/>
+                                            <h:selectOneMenu id="dayTypeMenu"  value="#{ruleItem.dayType}" styleClass="form-control" rendered="#{ruleItem.editing}" converter="#{dayTypeConverter}">
+                                                <f:selectItems value="#{item.dayTypes}" var="daytypeItem" itemLabel="#{daytypeItem.abbr}" itemValue="#{daytypeItem}"/>
+                                            </h:selectOneMenu>
+                                        </h:panelGroup>
+                                    </p:column>
+                                    <p:column rendered="false">
+                                        <f:facet name="header">
+                                            <h:outputText value="#{bundle.ViewScheduleTemplateTitle_description}"/>
+                                        </f:facet>
+                                        <h:outputText value="#{ruleItem.dayType.description}"/>
+                                    </p:column>
+                                    <p:column>
+                                        <f:facet name="header">
+                                            <h:outputText value="&nbsp;"/>
+                                        </f:facet>
+                                        <h:panelGroup id="commandLinks">
+                                            <h:commandLink id="editRuleButton" styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not ruleItem.editing}">
+                                                <p:ajax event="click" update="dayTypeAbbr commandLinks" listener="#{scheduleTemplateController.activateEditDayRule(item, ruleItem)}"/>
+                                            </h:commandLink>
+                                            <h:commandLink id="saveRuleButton" styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{ruleItem.editing}">
+                                                <p:ajax event="click" process="@this dayTypeAbbr" update="dayTypeAbbr commandLinks :form1:messagePanel" listener="#{scheduleTemplateController.saveDayRule(item,ruleItem)}"/>
+                                            </h:commandLink>
+                                            <h:outputText value=" "/>
+                                            <h:commandLink id="cancelRuleButton" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" rendered="#{ruleItem.editing}">
+                                                <p:ajax event="click" process="@this dayTypeAbbr" update="dayTypeAbbr commandLinks" listener="#{scheduleTemplateController.cancelDayRule(item, ruleItem)}"/>
+                                            </h:commandLink>
+                                        </h:panelGroup>
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </p:panel>
+                    </p:rowExpansion>
+                </p:dataTable>
+            </h:panelGroup>
+            <script>
+                /* var cloned = {};
+                 $(document).ready(function() {
+                 $(".datatypes tr").draggable({
+                 helper: "clone",
+                 start: function(event, ui) {
+                 cloned.tr = this;
+                 cloned.helper = ui.helper;
+                 }
+                 });
+                 
+                 $("[id='#{dayrules.clientId}'] tr").draggable({
+                 drop: function(event, ui) {
+                 var inventor = ui.draggable.text();
+                 $(this).find("input").val(inventor);
+                 
+                 $(c.tr).remove();
+                 $(c.helper).remove();
+                 }
+                 });
+                 
+                 }*/
+            </script>
+        </ui:define>
+    </ui:composition>
+
+</html>

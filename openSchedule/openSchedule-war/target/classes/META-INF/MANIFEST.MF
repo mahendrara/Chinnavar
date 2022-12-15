@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.10.5
+Build-Jdk-Spec: 1.8.0_202 (Oracle Corporation)
+Implementation-Title: Open Schedule - war
+Implementation-Vendor: Alstom SA
+Implementation-Version: 5.0.7506

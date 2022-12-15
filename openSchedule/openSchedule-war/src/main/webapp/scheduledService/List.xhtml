@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--<html xmlns="http://www.w3.org/1999/xhtml"-->
+<!--      xmlns:ui="http://java.sun.com/jsf/facelets"-->
+<!--      xmlns:h="http://java.sun.com/jsf/html"-->
+<!--      xmlns:f="http://java.sun.com/jsf/core"-->
+<!--      xmlns:p="http://primefaces.org/ui">-->
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListScheduledServiceTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <div id="filterControl" class="panel panel-default">
+                <div class="panel-body form-inline">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <p:outputLabel for="scheduledDayDate" value="#{bundle.Filter_Date}"/>
+                        <p:datePicker id="scheduledDayDate" label="#{bundle.DateTime_Date}" value="#{scheduledServiceController.dateFilter}" pattern='#{bundle.PF_DAYTYPE_PATTERN}'>
+                            <p:ajax event="dateSelect" listener="#{scheduledServiceController.resetPagination()}" update="@form"/>                            
+                        </p:datePicker>
+                    </h:panelGrid>
+                </div>
+            </div>
+
+
+            <h:panelGroup id="messagePanel1" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:panelGrid id="panelGrid1" columns="1" >
+                <h:commandLink styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not scheduledServiceController.addAllowed}">
+                        <p:ajax listener="#{scheduledServiceController.addNew}" onevent="onAjaxUpdate" update="panelGroup1 @this" />
+                </h:commandLink>
+            </h:panelGrid>
+            <h:panelGroup id="panelGroup1">
+                <h:outputText value="#{scheduledServiceController.pagination.pageFirstItem + 1}..#{scheduledServiceController.pagination.pageLastItem + 1}/#{scheduledServiceController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink action="#{scheduledServiceController.previous}" value="#{bundle.Previous} #{scheduledServiceController.pagination.pageSize}" rendered="#{scheduledServiceController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink action="#{scheduledServiceController.next}" value="#{bundle.Next} #{scheduledServiceController.pagination.pageSize}" rendered="#{scheduledServiceController.pagination.hasNextPage}"/>&nbsp;
+                <h:dataTable id="sService" value="#{scheduledServiceController.items}" var="item" styleClass="table table-nonfluid table-striped table-bordered table-hover">
+                    <!-- SERVICE -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_description}"/>
+                        </f:facet>
+                        <h:panelGroup id="descP">
+                            <h:outputText value="#{item.description}" rendered="#{not item.editing}"/>
+                            <h:inputText value="#{item.description}" class="form-control" rendered="#{item.editing}" required="true" requiredMessage="#{bundle.RequiredMessage_description}" validatorMessage="#{bundle.ValidatorMessage_serviceName}">
+                                <f:validateRegex pattern="#{bundle.SERVICE_REGEXP_PATTERN}"/>
+                            </h:inputText>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- Date -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_date}"/>
+                        </f:facet>
+                        <h:panelGroup id="col2">
+                            <h:outputText value="#{item.day.dateOfDay}">
+                                <f:convertDateTime type="date"/>
+                            </h:outputText>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- TRAIN TYPE -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_trainType}"/>
+                            <br />
+                            <h:panelGroup>
+                                <h:selectOneMenu value="#{scheduledServiceController.filter.trainTypeFilter}" class="form-control" converter="#{trainTypeConverter}">
+                                    <f:selectItem itemLabel="#{scheduledServiceController.trainTypeAll.description}" itemValue="#{scheduledServiceController.trainTypeAll}"></f:selectItem>
+                                    <f:selectItems value="#{scheduledServiceController.trainTypes}" var="trainType" itemLabel="#{trainType.description}" itemValue="#{trainType}">
+                                    </f:selectItems>
+                                     <p:ajax update="@form" process="@this" listener="#{scheduledServiceController.resetPagination()}" />
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </f:facet>
+
+                        <h:panelGroup id="trainTypeP">
+                            <h:outputText value="#{item.trainType.description}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu value="#{item.trainType}" rendered="#{item.editing}" class="form-control" converter="#{trainTypeConverter}">
+                                <f:selectItems value="#{scheduledServiceController.trainTypes}" var="trainType" itemLabel="#{trainType.description}" itemValue="#{trainType}">
+                                </f:selectItems>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- AREA -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_area}"/>
+                            <br />
+                            <h:panelGroup>
+                                <h:selectOneMenu value="#{scheduledServiceController.filter.areaFilter}" class="form-control" converter="#{TTObjectConverter}">
+                                    <f:selectItem itemLabel="#{scheduledServiceController.areaAll.description}" itemValue="#{scheduledServiceController.areaAll}"></f:selectItem>
+                                    <f:selectItems value="#{scheduledServiceController.areas}" var="areaItem" itemLabel="#{areaItem.getText(languageBean.OSLocale)}" itemValue="#{areaItem}">
+                                    </f:selectItems>
+                                     <p:ajax update="@form" process="@this" listener="#{scheduledServiceController.resetPagination()}" />
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </f:facet>
+                        <h:panelGroup id="areaP">
+                            <h:outputText value="#{item.areaObj.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu value="#{item.areaObj}" rendered="#{item.editing}" class="form-control" converter="#{TTObjectConverter}">
+                                <f:selectItems value="#{scheduledServiceController.areas}" var="areaItem" itemLabel="#{areaItem.getText(languageBean.OSLocale)}" itemValue="#{areaItem}">
+                                </f:selectItems>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- FROM -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_plannedStartObj}"/>
+                        </f:facet>
+                        <h:panelGroup id="startObjP">
+                            <h:outputText value="#{item.plannedStartObj.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu rendered="#{item.editing}" class="form-control" value="#{scheduledServiceController.selectedServiceStartTTObjectType}" converter="#{TTObjectTypeConverter}">
+                                <f:selectItems var="objtype" value="#{scheduledServiceController.possibleServiceStartTTObjectTypes}" itemLabel="#{objtype.getText(languageBean.OSLocale)}" itemValue="#{objtype}"/>
+                                <p:ajax update="possibleLocations1" process="@this" />
+                            </h:selectOneMenu>
+                            <h:selectOneMenu id="possibleLocations1" rendered="#{item.editing}" class="form-control" value="#{item.plannedStartObj}" converter="#{TTObjectConverter}" required="true" requiredMessage="#{bundle.RequiredMessage_from}">
+                                <f:selectItems var="location" value="#{scheduledServiceController.possibleServiceStartLocations}" itemLabel="#{location.getText(languageBean.OSLocale)}" itemValue="#{location}"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- TO -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_plannedStopObj}"/>
+                        </f:facet>
+                        <h:panelGroup id="stopObjP">
+                            <h:outputText value="#{item.plannedStopObj.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu rendered="#{item.editing}" class="form-control" value="#{scheduledServiceController.selectedServiceStopTTObjectType}" converter="#{TTObjectTypeConverter}">
+                                <f:selectItems var="objtype" value="#{scheduledServiceController.possibleServiceStopTTObjectTypes}" itemLabel="#{objtype.getText(languageBean.OSLocale)}" itemValue="#{objtype}"/>
+                                <p:ajax update="possibleLocations2" process="@this" />
+                            </h:selectOneMenu>
+                            <h:selectOneMenu id="possibleLocations2" rendered="#{item.editing}" class="form-control" value="#{item.plannedStopObj}" converter="#{TTObjectConverter}" required="true" requiredMessage="#{bundle.RequiredMessage_to}">
+                                <f:selectItems var="location" value="#{scheduledServiceController.possibleServiceStopLocations}" itemLabel="#{location.getText(languageBean.OSLocale)}" itemValue="#{location}"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- START TIME -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_startTime}"/>
+                        </f:facet>
+                        <h:panelGroup id="startTimeP">
+                            <h:outputText value="+#{item.dayForPlannedStartTime} #{bundle.day} " rendered="#{item.dayForPlannedStartTime>0}"></h:outputText>
+                            <h:outputText id="col6" value="#{item.plannedStartTime}" rendered="#{not item.editing}">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:outputText>
+                            <h:inputText label="#{bundle.DateTime_Time}" styleClass="timePickerInput1 form-control"  rendered="#{item.editing}" value="#{item.plannedStartTime}" required="true" maxlength="8" size="8" requiredMessage="#{bundle.RequiredMessage_starttime}"  onfocus="initTimePickerWithTime('#{languageBean.locale.displayLanguage},#{item.plannedStartTime.hours},#{item.plannedStartTime.minutes},#{item.plannedStartTime.seconds}')">
+                                <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                            </h:inputText>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- END TIME -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_endTime}"/>
+                        </f:facet>
+                        <h:panelGroup id="endTimeP">
+                            <h:outputText value="+#{item.dayForPlannedStopTime} #{bundle.day} " rendered="#{item.dayForPlannedStopTime>0}"></h:outputText>
+                            <h:outputText id="col7" value="#{item.plannedStopTime}">
+                                <f:convertDateTime type="time"  pattern="HH:mm:ss"/>
+                            </h:outputText>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- DURATION -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_duration}"/>
+                        </f:facet>
+                        <h:panelGroup id="durationP">
+                            <h:outputText value="+#{item.dayForPlannedDuration} #{bundle.day} " rendered="#{item.dayForPlannedDuration>0}"></h:outputText>
+                            <h:outputText value="#{item.timeForPlannedDuration}"/>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- PLANNED STATE -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_plannedState}"/>
+                            <br />
+                            <h:panelGroup>
+                                <h:selectOneMenu value="#{scheduledServiceController.filter.plannedStateFilter}" class="form-control" converter="#{schedulingStateConverter}">
+                                    <f:selectItem itemLabel="#{scheduledServiceController.schedulingStateAll.description}" itemValue="#{scheduledServiceController.schedulingStateAll}"></f:selectItem>
+                                    <f:selectItems value="#{scheduledServiceController.schedulingStates}" var="state" itemLabel="#{state.getText(languageBean.OSLocale)}" itemValue="#{state}">
+                                    </f:selectItems>
+                                    <p:ajax update=":form1:panelGrid1 :form1:panelGroup1" listener="#{scheduledServiceController.filterChanged}" />
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </f:facet>
+                        <h:panelGroup id="plannedStateP">
+                            <h:outputText value="#{item.plannedState.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu value="#{item.plannedState}" rendered="#{item.editing}" class="form-control" converter="#{schedulingStateConverter}">
+                                <f:selectItems value="#{scheduledServiceController.schedulingStates}" var="state" itemLabel="#{state.getText(languageBean.OSLocale)}" itemValue="#{state}">
+                                </f:selectItems>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </h:column>
+                    <!-- CURRENT STATE -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_currentState}"/>
+                            <br />
+                            <h:panelGroup>
+                                <h:selectOneMenu value="#{scheduledServiceController.filter.currentStateFilter}" class="form-control" converter="#{schedulingStateConverter}">
+                                    <f:selectItem itemLabel="#{scheduledServiceController.schedulingStateAll.description}" itemValue="#{scheduledServiceController.schedulingStateAll}"></f:selectItem>
+                                    <f:selectItems value="#{scheduledServiceController.schedulingStates}" var="state" itemLabel="#{state.getText(languageBean.OSLocale)}" itemValue="#{state}">
+                                    </f:selectItems>
+                                    <p:ajax update=":form1:panelGrid1 :form1:panelGroup1" listener="#{scheduledServiceController.filterChanged}" />
+                                </h:selectOneMenu>
+                            </h:panelGroup>
+                        </f:facet>
+                        <h:outputText value="#{item.currentState.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                    </h:column>
+                    <!-- NUMBER OF ACTIONS -->
+                    <!--<h:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListScheduledServiceTitle_numberOfActions}"/>
+                        </f:facet>
+                        <h:outputText id="col11" value="#{item.numberOfActions}"/>
+                    </h:column>-->
+                    <!-- ****** -->
+                    <!-- COMMANDS -->
+                    <!-- ****** -->
+                    <h:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:panelGroup id="commandP">
+                            <h:commandLink id="detail" styleClass="icon-search" title="#{bundle.Tooltip_View}" rendered="#{not item.editing}" action="#{scheduledServiceController.prepareView(item)}">
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not item.editing}">
+                                <p:ajax event="click" update=":form1:panelGrid1 sService:descP sService:areaP sService:trainTypeP sService:startObjP sService:stopObjP sService:startTimeP sService:endTimeP sService:plannedStateP sService:commandP"
+                                        listener="#{scheduledServiceController.activateEdit(item)}" onevent="onAjaxUpdate" />
+                            </h:commandLink>
+                            <h:commandLink styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{item.editing}">
+                                <p:ajax event="click" process="@this sService:descP sService:areaP sService:trainTypeP sService:startObjP sService:stopObjP sService:startTimeP sService:endTimeP sService:plannedStateP sService:commandP"
+                                        update= ":form1:messagePanel1 :form1:panelGrid1 :form1:panelGroup1"
+                                        listener="#{scheduledServiceController.save(item)}" />
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" rendered="#{item.editing and !item.creating}">
+                                <p:ajax event="click" listener="#{scheduledServiceController.cancel(item)}"  onevent="onAjaxUpdate" update=":form1:panelGrid1 sService:descP sService:areaP sService:trainTypeP sService:startObjP sService:stopObjP sService:startTimeP sService:endTimeP sService:plannedStateP sService:commandP" />
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink styleClass="icon-remove" rendered="#{item.creating or not item.editing}" title="#{bundle.Tooltip_Delete}" immediate="true">
+                                <p:ajax event="click" onevent="onAjaxUpdate" update=":form1:messagePanel1 :form1:panelGrid1 :form1:panelGroup1" listener="#{scheduledServiceController.destroy(item)}"/>
+                            </h:commandLink>
+                        </h:panelGroup>
+                    </h:column>
+                </h:dataTable>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+
+</html>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewVehicleTitle} "></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputText value="#{bundle.ViewVehicleLabel_vehicleid}"/>
+                    <h:outputText value="#{vehicleController.selected.vehicleid}" title="#{bundle.ViewVehicleTitle_vehicleid}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_vehicletype}"/>
+                    <h:outputText value="#{vehicleController.selected.vehicletype}" title="#{bundle.ViewVehicleTitle_vehicletype}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_vehiclesubtype}"/>
+                    <h:outputText value="#{vehicleController.selected.vehiclesubtype}" title="#{bundle.ViewVehicleTitle_vehiclesubtype}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_vehiclestate}"/>
+                    <h:outputText value="#{vehicleController.selected.vehiclestate}" title="#{bundle.ViewVehicleTitle_vehiclestate}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_commtype}"/>
+                    <h:outputText value="#{vehicleController.selected.commtype}" title="#{bundle.ViewVehicleTitle_commtype}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_shortname}"/>
+                    <h:outputText value="#{vehicleController.selected.shortname}" title="#{bundle.ViewVehicleTitle_shortname}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_serialno}"/>
+                    <h:outputText value="#{vehicleController.selected.serialno}" title="#{bundle.ViewVehicleTitle_serialno}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_atoid}"/>
+                    <h:outputText value="#{vehicleController.selected.atoid}" title="#{bundle.ViewVehicleTitle_atoid}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_radioserialno}"/>
+                    <h:outputText value="#{vehicleController.selected.radioserialno}" title="#{bundle.ViewVehicleTitle_radioserialno}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_descripition}"/>
+                    <h:outputText value="#{vehicleController.selected.descripition}" title="#{bundle.ViewVehicleTitle_descripition}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_uiimage}"/>
+                    <h:outputText value="#{vehicleController.selected.uiimage}" title="#{bundle.ViewVehicleTitle_uiimage}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_vehiclelength}"/>
+                    <h:outputText value="#{vehicleController.selected.vehiclelength}" title="#{bundle.ViewVehicleTitle_vehiclelength}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_deicingdevice}"/>
+                    <h:outputText value="#{vehicleController.selected.deicingdevice}" title="#{bundle.ViewVehicleTitle_deicingdevice}"/>
+                    <h:outputText value="#{bundle.ViewVehicleLabel_usercomment}"/>
+                    <h:outputText value="#{vehicleController.selected.usercomment}" title="#{bundle.ViewVehicleTitle_usercomment}"/>
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{vehicleController.destroyAndView}" value="#{bundle.ViewVehicleDestroyLink}"/>
+                <br />
+                <br />
+                <h:commandLink action="Edit" value="#{bundle.ViewVehicleEditLink}"/>
+                <br />
+                <h:commandLink action="#{vehicleController.prepareCreate}" value="#{bundle.ViewVehicleCreateLink}" />
+                <br />
+                <h:commandLink action="#{vehicleController.prepareList}" value="#{bundle.ViewVehicleShowAllLink}"/>
+                <br />
+                <br />
+                <h:commandLink value="#{bundle.ViewVehicleIndexLink}" action="/index" immediate="true" />
+
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

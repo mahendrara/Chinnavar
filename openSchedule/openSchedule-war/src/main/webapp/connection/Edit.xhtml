@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.EditConnectionTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:form>
+                <h:panelGrid columns="2">
+                    <h:outputLabel value="#{bundle.EditConnectionLabel_connid}" for="connid" />
+                    <h:inputText id="connid" value="#{connectionController.selected.connid}" title="#{bundle.EditConnectionTitle_connid}" required="true" requiredMessage="#{bundle.EditConnectionRequiredMessage_connid}"/>
+                    <h:outputLabel value="#{bundle.EditConnectionLabel_connType}" for="connType" />
+                    <h:inputText id="connType" value="#{connectionController.selected.connType}" title="#{bundle.EditConnectionTitle_connType}" required="true" requiredMessage="#{bundle.EditConnectionRequiredMessage_connType}"/>
+                    <h:outputLabel value="#{bundle.EditConnectionLabel_connStatus}" for="connStatus" />
+                    <h:inputText id="connStatus" value="#{connectionController.selected.connStatus}" title="#{bundle.EditConnectionTitle_connStatus}" required="true" requiredMessage="#{bundle.EditConnectionRequiredMessage_connStatus}"/>
+                    <h:outputLabel value="#{bundle.EditConnectionLabel_dayTypeId}" for="dayTypeId" />
+                    <h:inputText id="dayTypeId" value="#{connectionController.selected.dayTypeId}" title="#{bundle.EditConnectionTitle_dayTypeId}" />
+                    <h:outputLabel value="#{bundle.EditConnectionLabel_scheduleddaycode}" for="scheduleddaycode" />
+                    <h:inputText id="scheduleddaycode" value="#{connectionController.selected.scheduleddaycode}" title="#{bundle.EditConnectionTitle_scheduleddaycode}" />
+                    <h:outputLabel value="#{bundle.EditConnectionLabel_minOverlap}" for="minOverlap" />
+                    <h:inputText id="minOverlap" value="#{connectionController.selected.minOverlap}" title="#{bundle.EditConnectionTitle_minOverlap}" />
+                </h:panelGrid>
+                <h:commandLink action="#{connectionController.update}" value="#{bundle.EditConnectionSaveLink}"/>
+                <br />
+                <br />
+                <h:commandLink action="View" value="#{bundle.EditConnectionViewLink}" immediate="true"/>
+                <br />
+                <h:commandLink action="#{connectionController.prepareList}" value="#{bundle.EditConnectionShowAllLink}" immediate="true"/>
+                <br />
+                <br />
+                <h:commandLink value="#{bundle.EditConnectionIndexLink}" action="/index" immediate="true" />
+            </h:form>
+        </ui:define>
+    </ui:composition>
+
+</html>

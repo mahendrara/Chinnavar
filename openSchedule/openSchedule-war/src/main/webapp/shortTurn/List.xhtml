@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListShortTurnTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block" styleClass="alert-info">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:panelGrid id="panelGrid1" columns="1" >
+                <h:commandLink id="addButton" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not shortTurnController.isAddAllowed()}">
+                    <p:ajax event="click" update="panelGroup1 @this" listener="#{shortTurnController.addNew}" />
+                </h:commandLink>
+            </h:panelGrid>
+            <h:panelGroup id="panelGroup1">
+                <h:outputText value="#{shortTurnController.pagination.pageFirstItem + 1}..#{shortTurnController.pagination.pageLastItem + 1}/#{shortTurnController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink action="#{shortTurnController.previous}" value="#{bundle.Previous} #{shortTurnController.pagination.pageSize}" rendered="#{shortTurnController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink action="#{shortTurnController.next}" value="#{bundle.Next} #{shortTurnController.pagination.pageSize}" rendered="#{shortTurnController.pagination.hasNextPage}"/>&nbsp;
+                <p:dataTable id="shortTurnList" value="#{shortTurnController.items}" var="item" tableStyle="width:auto" styleClass="table table-nonfluid table-striped table-hover">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListShortTurnTitle_trainType}"/>
+                            <br/>
+                            <h:selectOneMenu id="trainTypeFilter" value="#{shortTurnController.selectedTrainType}" class="form-control" converter="#{trainTypeConverter}">
+                                <f:selectItem itemLabel="#{shortTurnController.trainTypeAll.description}" itemValue="#{shortTurnController.trainTypeAll}"></f:selectItem>
+                                <f:selectItems value="#{shortTurnController.trainTypes}" var="trainType" itemLabel="#{trainType.description}" itemValue="#{trainType}"/>
+                                <p:ajax update="@form" process="@this" listener="#{shortTurnController.resetPagination()}" />
+                            </h:selectOneMenu>
+                        </f:facet>
+                        <h:panelGroup id="traintype">
+                            <h:outputText value="#{item.trainTypeId.description}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu id="trainTypeMenu" value="#{item.trainTypeId}" rendered="#{item.editing}" styleClass="form-control" converter="#{trainTypeConverter}">
+                                <f:selectItems value="#{shortTurnController.trainTypes}" var="trainTypeItem" itemLabel="#{trainTypeItem.description}" itemValue="#{trainTypeItem}"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListShortTurnTitle_from}"/>
+                        </f:facet>
+                        <h:panelGroup id="fromid">
+                            <h:outputText value="#{item.fromId.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu id="fromMenu" value="#{item.fromId}" rendered="#{item.editing}" styleClass="form-control" converter="#{TTObjectConverter}">
+                                <f:selectItems value="#{shortTurnController.ttObjects}" var="ttObjectItem" itemLabel="#{ttObjectItem.getText(languageBean.OSLocale)}" itemValue="#{ttObjectItem}"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListShortTurnTitle_to}"/>
+                        </f:facet>
+                        <h:panelGroup id="toid">
+                            <h:outputText value="#{item.toId.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu id="toMenu" value="#{item.toId}" rendered="#{item.editing}" styleClass="form-control" converter="#{TTObjectConverter}">
+                                <f:selectItems value="#{shortTurnController.ttObjects}" var="ttObjectItem" itemLabel="#{ttObjectItem.getText(languageBean.OSLocale)}" itemValue="#{ttObjectItem}"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListShortTurnTitle_destination}"/>
+                        </f:facet>
+                        <h:panelGroup id="destinationid">
+                            <h:outputText value="#{item.destinationId.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu id="destinationMenu" value="#{item.destinationId}" rendered="#{item.editing}" styleClass="form-control" converter="#{TTObjectConverter}">
+                                <f:selectItems value="#{shortTurnController.ttObjects}" var="ttObjectItem" itemLabel="#{ttObjectItem.getText(languageBean.OSLocale)}" itemValue="#{ttObjectItem}"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListShortTurnTitle_location}"/>
+                        </f:facet>
+                        <h:panelGroup id="locationid">
+                            <h:outputText value="#{item.locationId.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu id="locationMenu" value="#{item.locationId}" rendered="#{item.editing}" styleClass="form-control" converter="#{TTObjectConverter}">
+                                <f:selectItems value="#{shortTurnController.ttObjects}" var="ttObjectItem" itemLabel="#{ttObjectItem.getText(languageBean.OSLocale)}" itemValue="#{ttObjectItem}"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListShortTurnTitle_backid}"/>
+                        </f:facet>
+                        <h:panelGroup id="backid">
+                            <h:outputText value="#{item.backId.getText(languageBean.OSLocale)}" rendered="#{not item.editing}"/>
+                            <h:selectOneMenu id="backMenu" value="#{item.backId}" rendered="#{item.editing}" styleClass="form-control" converter="#{TTObjectConverter}">
+                                <f:selectItems value="#{shortTurnController.ttObjectsWithNull}" var="ttObjectItem" itemLabel="#{ttObjectItem.getText(languageBean.OSLocale)}" itemValue="#{ttObjectItem}"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListShortTurnTitle_allowpermanent}"/>
+                        </f:facet>
+                        <h:panelGroup id="allowpermanent">
+                            <h:selectBooleanCheckbox id="permanentCheckbox" value="#{item.allowpermanent}" disabled="#{not item.editing}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListShortTurnTitle_maxtrips}"/>
+                        </f:facet>
+                        <h:panelGroup id="maxtrips">
+                            <h:outputText value="#{item.maxtrips}" rendered="#{not item.editing}" />
+                            <h:inputText id="maxTripsInput" value="#{item.maxtrips}" class="form-control" rendered="#{item.editing}" required="true"  requiredMessage="#{bundle.RequiredMessage_maxtrips}" converterMessage="#{bundle.ValidatorMessage_maxtripnumber}"/>
+                        </h:panelGroup>
+                    </p:column>
+
+<!-- FromCurrent field not parsed in -->
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:commandLink id="editButton" styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not item.editing}">
+                            <p:ajax event="click" update=":form1:panelGrid1 :form1:panelGroup1 :form1:messagePanel" listener="#{shortTurnController.activateEdit(item)}"/>
+                        </h:commandLink>
+                        <h:commandLink id="saveButton" styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{item.editing}">
+                            <p:ajax event="click" process="@this traintype fromid toid destinationid locationid backid allowpermanent maxtrips" update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel" listener="#{shortTurnController.save(item)}"/>
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="cancelButton" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" immediate="true" rendered="#{item.editing and !item.creating}">
+                            <p:ajax event="click" update=":form1:panelGrid1 :form1:panelGroup1 :form1:messagePanel" listener="#{shortTurnController.cancel(item)}"/>
+                        </h:commandLink>
+                        <h:commandLink id="deleteButton" styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" rendered="#{item.creating or not item.editing}">
+                            <p:ajax event="click" update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel" listener="#{shortTurnController.destroy(item)}"/>
+                        </h:commandLink>
+                    </p:column>
+                </p:dataTable>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+
+</html>

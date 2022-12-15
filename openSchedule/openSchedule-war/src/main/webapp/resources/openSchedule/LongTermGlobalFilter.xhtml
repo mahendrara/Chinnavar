@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <!-- INTERFACE -->
+    <cc:interface>
+        <cc:attribute name="dayTypeAjaxListener" method-signature="void listener()" />
+        <cc:attribute name="areaAjaxListener" method-signature="void listener()" />
+        <cc:attribute name="renderStationFilter" default="false"></cc:attribute>
+    </cc:interface>
+
+    <!-- IMPLEMENTATION -->
+    <cc:implementation>
+        <div id="filterControl" class="panel panel-default">
+            <div class="panel-body form-inline">
+                <h:outputText value="#{bundle.Filter_Schedule}"></h:outputText>
+                <h:selectOneMenu  value="#{longTermFilterController.selectedSchedule}" styleClass="form-control"  converter="#{scheduleConverter}">
+                    <f:selectItems value="#{longTermFilterController.schedules}" var="schedule" itemLabel="#{schedule.description}" itemValue="#{schedule}"/>
+                    <f:ajax render="@form" execute="@this" listener="#{longTermFilterController.selectedScheduleChanged()}"/>
+                </h:selectOneMenu>
+
+                <h:outputText value="#{bundle.Filter_DayType}"></h:outputText>
+                <h:selectOneMenu  value="#{longTermFilterController.selectedDayType}" styleClass="form-control"  converter="#{dayTypeConverter}">
+                    <f:selectItems value="#{longTermFilterController.dayTypes}" var="dayType" itemLabel="#{dayType.abbr}" itemValue="#{dayType}"/>
+                    <f:ajax render="@form" execute="@this" listener="#{longTermFilterController.selectedDayTypeChanged()}"/>
+                </h:selectOneMenu>
+
+                <h:outputText value="#{bundle.Filter_Area}"></h:outputText>
+                <h:selectOneMenu  value="#{longTermFilterController.selectedArea}" styleClass="form-control"  converter="#{TTObjectConverter}">
+                    <f:selectItems value="#{longTermFilterController.areaFilter}" var="area" itemLabel="#{area.getText(languageBean.OSLocale)}" itemValue="#{area}"/>
+                    <f:ajax render="@form" execute="@this" listener="#{longTermFilterController.selectedAreaChanged()}"/>
+                </h:selectOneMenu>
+
+                <h:outputText value="#{bundle.Filter_StartFrom}" rendered="#{cc.attrs.renderStationFilter}"></h:outputText>
+                <h:panelGroup rendered="#{cc.attrs.renderStationFilter}">
+                    <h:selectOneMenu styleClass="form-control" value="#{longTermFilterController.selectedStartTTObjectType}" converter="#{TTObjectTypeConverter}" >
+                        <f:selectItem itemLabel="#{longTermFilterController.startTTObjectTypeAll.description}" itemValue="#{longTermFilterController.startTTObjectTypeAll}"></f:selectItem>
+                        <f:selectItems var="objtype" value="#{longTermFilterController.possibleStartTTObjectTypes}" itemLabel="#{objtype.getText(languageBean.OSLocale)}" itemValue="#{objtype}"/>
+                        <f:ajax render="@form" execute="@this" listener="#{longTermFilterController.selectedStartTTObjectTypeChanged()}"/>
+                    </h:selectOneMenu>
+                    <h:selectOneMenu class="form-control" value="#{longTermFilterController.selectedStartTTObject}" rendered="#{longTermFilterController.possibleStartTTObjectsAvailable}" converter="#{TTObjectConverter}">
+                        <f:selectItems var="location" value="#{longTermFilterController.possibleStartTTObjects}" itemLabel="#{location.getText(languageBean.OSLocale)}" itemValue="#{location}"/>
+                        <f:ajax render="@form" execute="@this" listener="#{longTermFilterController.selectedStartTTObjectChanged()}"/>
+                    </h:selectOneMenu>
+                </h:panelGroup>
+            </div>
+
+        </div>
+    </cc:implementation>
+</html>

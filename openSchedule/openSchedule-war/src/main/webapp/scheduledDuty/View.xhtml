@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ViewScheduledDutyTitle} "></h:outputText>
+            <h:outputText value="#{scheduledDutyController.selected.description}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <ui:param name="selectedItem" value="#{scheduledDutyController.selected}" />
+            <p:panel id="panel1" style="border:none;">
+                <h:panelGrid  columns="2">
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_description}"/>
+                    <h:outputText value="#{selectedItem.description}"/>
+
+                    <h:outputText value="#{bundle.Filter_Date}"/>
+                    <h:outputText value="#{selectedItem.day.dateOfDay}">
+                        <f:convertDateTime type="date"/>
+                    </h:outputText>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_dayType}"/>
+                    <h:outputText value="#{selectedItem.dayType.abbr}"/>
+
+                    <h:outputText value="#{bundle.ListTripLabel_tripType}"/>
+                    <h:outputText value="#{selectedItem.tripType.getText(languageBean.OSLocale)}"/>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_area}"/>
+                    <h:outputText value="#{selectedItem.areaObj.getText(languageBean.OSLocale)}"/>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabe_plannedStartObj}"/>
+                    <h:outputText value="#{selectedItem.plannedStartObj.getText(languageBean.OSLocale)}"/>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabe_plannedStopObj}"/>
+                    <h:outputText value="#{selectedItem.plannedStopObj.getText(languageBean.OSLocale)}"/>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_starttime}"/>
+                    <h:panelGroup>
+                        <h:outputText value="+#{selectedItem.dayForPlannedStartTime} #{bundle.day} " rendered="#{selectedItem.dayForPlannedStartTime>0}"></h:outputText>
+                        <h:outputText value="#{selectedItem.plannedStartTime}">
+                            <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                        </h:outputText>
+                    </h:panelGroup>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_endtime}"/>
+                    <h:panelGroup>
+                        <h:outputText value="+#{selectedItem.dayForPlannedStopTime} #{bundle.day} " rendered="#{selectedItem.dayForPlannedStopTime>0}"></h:outputText>
+                        <h:outputText value="#{selectedItem.plannedStopTime}">
+                            <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                        </h:outputText>
+                    </h:panelGroup>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_duration}"/>
+                    <h:panelGroup>
+                        <h:outputText value="+#{selectedItem.dayForPlannedDuration} #{bundle.day} " rendered="#{selectedItem.dayForPlannedDuration>0}"></h:outputText>
+                        <h:outputText value="#{selectedItem.timeForPlannedDuration}"/>
+                    </h:panelGroup>
+
+                    <h:outputText value="#{bundle.ViewPlannedServiceLabel_numberOfActions}"/>
+                    <h:outputText value="#{selectedItem.tripActions.size()}"/>
+                </h:panelGrid>
+
+                <h:panelGroup id="messagePanel" layout="block">
+                    <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+                </h:panelGroup>
+
+                <p:tabView id="tabView1"  dynamic="true" cache="false">
+                    <p:tab id="tab1" title="#{bundle.ScheduledDutyTitle_action}">
+                        <p:dataTable value="#{scheduledDutyController.selected.tripActions}" var="tripActionItem" tableStyle="width:auto" styleClass="table-nonfluid table-striped table-bordered table-hover">
+                            <p:column>
+                                <!-- SEQUENCE -->
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.ViewScheduledServiceTitle_SeqNo}"/>
+                                </f:facet>
+                                <h:outputText value="#{tripActionItem.seqNo}"/>
+                                <p:overlayPanel id="overlayPanel" for="actionBox" dynamic="false" my="left top" at="left bottom" >
+                                    <p:panel style="border:none">
+                                        <div class="row">
+                                            <h:outputText value="#{bundle.ViewScheduledTripTitle} "></h:outputText>
+                                            <h:outputText value="#{scheduledTripController.selected.description}"></h:outputText>
+                                        </div>
+                                        <br />
+                                        <div class="row" >
+                                            <h:panelGroup id="wrapper" style="max-height:400px; overflow:auto;">
+                                                <h:dataTable value="#{tripActionItem.refTrip.tripTemplate.tripActions}" var="templateActionItem" styleClass="table table-nonfluid table-striped table-bordered table-hover" rules="all" >
+                                                    <h:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ViewScheduledServiceTitle_SeqNo}"/>
+                                                        </f:facet>
+                                                        <h:outputText value="#{templateActionItem.seqNo}"/>
+                                                    </h:column>
+                                                    <h:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ViewScheduledServiceTitle_action}"/>
+                                                        </f:facet>
+
+                                                        <h:panelGroup id="actionTypeP" >
+                                                            <h:outputText value="#{templateActionItem.actionType.getText(languageBean.OSLocale)}"/>
+                                                            <h:outputText styleClass="icon-long-arrow-right"  rendered="#{templateActionItem.hasSecondObject()}"/>
+                                                            <h:outputText value="#{templateActionItem.timetableObject2.getText(languageBean.OSLocale)}" rendered="#{(not templateActionItem.editing) and templateActionItem.hasSecondObject()}" />
+                                                        </h:panelGroup>
+                                                    </h:column>
+                                                    <h:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ViewScheduledServiceTitle_obj}"/>
+                                                        </f:facet>
+
+                                                        <h:panelGroup id="timetableObjP">
+                                                            <h:outputText value="#{templateActionItem.timetableObject.getText(languageBean.OSLocale)}" rendered="#{not templateActionItem.editing}"/>
+                                                        </h:panelGroup>
+                                                    </h:column>
+                                                    <h:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ViewScheduledServiceTitle_startingTime}"/>
+                                                        </f:facet>
+                                                        <h:outputText value="+#{templateActionItem.getActionStartDay(tripActionItem.refTrip)} #{bundle.day} " rendered="#{templateActionItem.getActionStartDay(tripActionItem.refTrip)>0}"></h:outputText>
+                                                        <h:outputText value="#{tripActionItem.refTrip.getActionStartTime(templateActionItem)}">
+                                                            <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                                                        </h:outputText>
+                                                    </h:column>
+                                                    <h:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ViewScheduledServiceTitle_endingTime}"/>
+                                                        </f:facet>
+                                                        <h:outputText value="+#{templateActionItem.getActionEndDay(tripActionItem.refTrip)} #{bundle.day} " rendered="#{templateActionItem.getActionEndDay(tripActionItem.refTrip)>0}"></h:outputText>
+                                                        <h:outputText value="#{tripActionItem.refTrip.getActionEndTime(templateActionItem)}">
+                                                            <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                                                        </h:outputText>
+                                                    </h:column>
+                                                    <h:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ViewScheduledServiceTitle_plannedSecs}"/>
+                                                        </f:facet>
+                                                        <h:panelGroup id="plannedSecsP">
+                                                            <h:outputText value="+#{templateActionItem.dayForPlannedDuration} #{bundle.day} " rendered="#{templateActionItem.dayForPlannedDuration>0}"></h:outputText>
+                                                            <h:outputText value="#{templateActionItem.timeForPlannedDuration}"></h:outputText>
+                                                        </h:panelGroup>
+                                                    </h:column>
+                                                    <h:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ViewScheduledServiceTitle_minSecs}"/>
+                                                        </f:facet>
+                                                        <h:panelGroup id="minSecsP">
+                                                            <h:outputText value="+#{templateActionItem.dayForMinDuration} #{bundle.day} " rendered="#{templateActionItem.dayForMinDuration>0}"></h:outputText>
+                                                            <h:outputText value="#{templateActionItem.timeForMinDuration}"/>
+                                                        </h:panelGroup>
+                                                    </h:column>
+                                                    <h:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ViewTripTitle_total}"/>
+                                                        </f:facet>
+                                                        <h:outputText value="+#{templateActionItem.dayForEndTimeFromTripStart} #{bundle.day} " rendered="#{templateActionItem.dayForEndTimeFromTripStart>0 and not templateActionItem.creating}"></h:outputText>
+                                                        <h:outputText id="timeP" value="#{templateActionItem.timeForEndTimeFromTripStart}" rendered="#{not templateActionItem.creating}"></h:outputText>
+                                                    </h:column>
+                                                    <h:column>
+                                                        <f:facet name="header">
+                                                            <h:outputText value="#{bundle.ViewTripTitle_totalMin}"/>
+                                                        </f:facet>
+                                                        <h:outputText value="+#{templateActionItem.dayForMinEndTimeFromTripStart} #{bundle.day} " rendered="#{templateActionItem.dayForMinEndTimeFromTripStart>0 and not templateActionItem.creating}"></h:outputText>
+                                                        <h:outputText id="minTimeP" value="#{templateActionItem.timeForMinEndTimeFromTripStart}" rendered="#{not templateActionItem.creating}"/>
+                                                    </h:column>
+                                                </h:dataTable>
+                                            </h:panelGroup>
+                                        </div>
+                                    </p:panel>
+                                </p:overlayPanel>
+                            </p:column>
+                            <p:column>
+                                <!-- ACTION TYPE -->
+                                <f:facet name="header">
+                                    <h:outputText id="actiontype" value="#{bundle.ViewScheduledServiceTitle_action}"/>
+                                </f:facet>
+                                <p:panel id="actionBox" style="border:none">
+                                <h:outputText value="#{tripActionItem.actionType.getText(languageBean.OSLocale)}" rendered="#{not tripActionItem.editing or (tripActionItem.getClass().getSimpleName() eq 'ActionTrainFormation')}"/>
+                                </p:panel>
+                            </p:column>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.MenuScheduledService}"/>
+                                </f:facet>
+                                <h:outputText value="#{tripActionItem.refTrip.serviceAction.trip.description}"/>
+
+                            </p:column>
+                            <p:column>
+                                <!-- ACTION LOCATION -->
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.ViewScheduledServiceTitle_obj}"/>
+                                </f:facet>
+                                <h:outputText value="#{tripActionItem.timetableObject.getText(languageBean.OSLocale)}" rendered="#{not tripActionItem.editing or (tripActionItem.getClass().getSimpleName() eq 'ActionGlue')}"/>
+                                <h:outputText styleClass="icon-long-arrow-right"  rendered="#{tripActionItem.hasSecondObject()}"/>
+                                <h:outputText value="#{tripActionItem.timetableObject2.getText(languageBean.OSLocale)}" rendered="#{(not tripActionItem.editing) and tripActionItem.hasSecondObject()}" />
+                            </p:column>
+                            <p:column>
+                                <!-- START TIME -->
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.ViewScheduledServiceTitle_startingTime}"/>
+                                </f:facet>
+                                <h:panelGroup>
+                                    <h:outputText value="+#{tripActionItem.refTrip.dayForPlannedStartTime} #{bundle.day} " rendered="#{tripActionItem.refTrip.dayForPlannedStartTime>0}"></h:outputText>
+                                    <h:outputText value="#{tripActionItem.refTrip.plannedStartTime}">
+                                        <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                                    </h:outputText>
+                                </h:panelGroup>
+                            </p:column>
+                            <p:column>
+                                <!-- END TIME -->
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.ViewScheduledServiceTitle_endingTime}"/>
+                                </f:facet>
+                                <h:panelGroup>
+                                    <h:outputText value="+#{tripActionItem.refTrip.dayForPlannedStopTime} #{bundle.day} " rendered="#{tripActionItem.refTrip.dayForPlannedStopTime>0}"></h:outputText>
+                                    <h:outputText value="#{tripActionItem.refTrip.plannedStopTime}">
+                                        <f:convertDateTime type="time" pattern="HH:mm:ss"/>
+                                    </h:outputText>
+                                </h:panelGroup>
+                            </p:column>
+                            <p:column>
+                                <!-- PLANNED DURATION -->
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.ViewScheduledServiceTitle_plannedSecs}"/>
+                                </f:facet>
+                                <h:panelGroup id="plannedSecsP">
+                                    <h:outputText value="+#{tripActionItem.dayForPlannedDuration} #{bundle.day} " rendered="#{tripActionItem.dayForPlannedDuration>0}"></h:outputText>
+                                    <h:outputText value="#{tripActionItem.timeForPlannedDuration}" />
+                                </h:panelGroup>
+                            </p:column>
+                            <p:column>
+                                <!-- MIN DURATION -->
+                                <f:facet name="header">
+                                    <h:outputText value="#{bundle.ViewTripTitle_minSecs}"/>
+                                </f:facet>
+                                <h:panelGroup id="minSecsP">
+                                    <h:outputText value="+#{tripActionItem.dayForMinDuration} #{bundle.day} " rendered="#{tripActionItem.dayForMinDuration>0}"></h:outputText>
+                                    <h:outputText value="#{tripActionItem.timeForMinDuration}"/>
+                                </h:panelGroup>
+                            </p:column>                            
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+            </p:panel>
+        </ui:define>
+    </ui:composition>
+</html>

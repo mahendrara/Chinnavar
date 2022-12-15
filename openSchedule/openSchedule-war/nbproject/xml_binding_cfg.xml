@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='openSchedule-war' version='1.0'>
+	<schema type='-xmlschema' package='' name='railML_v2_1'>
+		<xjc-options>
+			<xjc-option name='-nv' value='true'/>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='src/conf/xml-resources/jaxb/railML_v2_1/railML.xsd' origLocation='schema_v21/railML.xsd'/>
+		</schema-sources>
+		<bindings>
+			<binding origLocation='schema_v21/railML_BIND.xjb' location='src/conf/xml-resources/jaxb/railML_v2_1/railML_BIND.xjb.xml'/>
+		</bindings>
+		<catalog/>
+	</schema>
+</schemas>

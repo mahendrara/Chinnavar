@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">          
+    <ui:composition template="/template.xhtml">
+        <ui:define name="title">
+            <h:outputText value="#{bundle.ListUserTitle}"></h:outputText>
+        </ui:define>
+        <ui:define name="body">
+            <h:panelGroup id="messagePanel" layout="block" styleClass="alert-info">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h:panelGrid id="panelGrid1" columns="1" >
+                <h:commandLink id="addUserButton" styleClass="icon-plus" title="#{bundle.Tooltip_Add}" disabled="#{not UserController.isAddAllowed()}">
+                    <p:ajax event="click" update="panelGroup1 @this" listener="#{UserController.addNew}" />
+                </h:commandLink>
+            </h:panelGrid>
+            <h:panelGroup id="panelGroup1">
+                <h:outputText value="#{UserController.pagination.pageFirstItem + 1}..#{UserController.pagination.pageLastItem + 1}/#{UserController.pagination.itemsCount}"/>&nbsp;
+                <h:commandLink action="#{UserController.previous}" value="#{bundle.Previous} #{UserController.pagination.pageSize}" rendered="#{UserController.pagination.hasPreviousPage}"/>&nbsp;
+                <h:commandLink action="#{UserController.next}" value="#{bundle.Next} #{UserController.pagination.pageSize}" rendered="#{UserController.pagination.hasNextPage}"/>&nbsp;
+                <p:dataTable id="userList" value="#{UserController.items}" var="item" expandedRow="#{item.editing and not item.creating}" tableStyle="width:auto" styleClass="table table-nonfluid table-striped table-hover">
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListUserTitle_username}" />
+                        </f:facet>
+                        <h:panelGroup id="username">
+                            <h:outputText value="#{item.username}" rendered="#{not item.creating}"/>
+                            <h:inputText id="usernameInput" value="#{item.username}" styleClass="form-control" rendered="#{item.creating}" required="true" requiredMessage="#{bundle.RequiredMessage_username}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListUserTitle_name}" />
+                        </f:facet>
+                        <h:panelGroup id="name">
+                            <h:outputText value="#{item.name}" rendered="#{not item.editing}"/>
+                            <h:inputText id="nameInput" value="#{item.name}" styleClass="form-control" rendered="#{item.editing}" required="true" requiredMessage="#{bundle.RequiredMessage_name}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListUserTitle_access}"/>
+                        </f:facet>
+                        <h:panelGroup id="access">
+                            <h:outputText value="#{item.getUserGroupCollection().size()}" rendered="#{not item.creating}"/>
+                            <h:selectOneMenu value="#{item.userTemplate}" rendered="#{item.creating}" styleClass="form-control" converter="#{BaseUserConverter}">
+                                <f:selectItems value="#{UserController.userTemplates}" var="userTemplateItem" itemLabel="#{userTemplateItem.name}" itemValue="#{userTemplateItem}"/>
+                            </h:selectOneMenu>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="#{bundle.ListUserTitle_active}"/>
+                        </f:facet>
+                        <h:panelGroup id="active">
+                            <h:selectBooleanCheckbox id="checkboxInput"  value="#{item.active}" disabled="#{not item.editing || item.userid == 1}"/>
+                        </h:panelGroup>
+                    </p:column>
+                    <p:column>
+                        <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                        </f:facet>
+                        <h:panelGroup id="detailsButton" layout="block" style="color: #428bca !important;" class="icon-search ui-row-toggler" rendered="#{not item.editing}"/>
+                        <h:panelGroup layout="block" class="icon-search" rendered="#{item.editing}"/>
+
+                        <h:commandLink id="editButton" styleClass="icon-edit" title="#{bundle.Tooltip_Edit}" rendered="#{not item.editing}">
+                            <p:ajax event="click"  update=":form1:panelGroup1 :form1:messagePanel" listener="#{UserController.activateEdit(item)}"/>
+                        </h:commandLink>
+                        <h:commandLink id="saveButton" styleClass="icon-save" title="#{bundle.Tooltip_Save}" rendered="#{item.editing}">
+                            <p:ajax event="click" process="@this name username access active" update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel" listener="#{UserController.save(item)}"/>
+                        </h:commandLink>
+                        <h:outputText value=" "/>
+                        <h:commandLink id="cancelButton" styleClass="icon-undo" title="#{bundle.Tooltip_Cancel}" immediate="true" rendered="#{item.editing and !item.creating}">
+                            <p:ajax event="click" update=":form1:panelGroup1 :form1:messagePanel" listener="#{UserController.cancel(item)}"/>
+                        </h:commandLink>
+                        <h:commandLink id="deleteButton" styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" rendered="#{item.creating}" >
+                            <p:ajax event="click" update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel" listener="#{UserController.destroy(item)}"/>
+                        </h:commandLink>
+                    </p:column>
+                    <p:rowExpansion>
+                        <p:panel id="detailPanel" style="border: none;" >
+                                <h:panelGroup>
+                                <h:selectOneMenu id="userGroupMenu" value="#{item.createUserGroup}" disabled="#{not item.editing or not UserController.hasUnsetUserGroups(item)}" styleClass="form-control" converter="#{UserGroupConverter}">
+                                   <f:selectItems value="#{UserController.getUnsetUserGroups(item)}" var="userGroupItem" itemLabel="#{userGroupItem.groupname}" itemValue="#{userGroupItem}"/>
+                                </h:selectOneMenu>
+                                <h:commandLink id="userGroupAddButton" styleClass="icon-plus" title="#{bundle.Tooltip_Add}"  disabled="#{not item.editing or not UserController.hasUnsetUserGroups(item)}">
+                                    <p:ajax event="click" process="@this userGroupMenu" update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel detailPanel" listener="#{UserController.addNewUserGroup(item)}" />
+                                </h:commandLink>
+                                </h:panelGroup>
+                            <br/>
+                            <h:panelGroup>
+                                <h:commandButton id="resetPasswordButton" class="btn btn-default" value="#{bundle.UserPasswordButton}" rendered="#{item.editing}" action="#{UserController.resetPassword(item)}"/>                
+                            </h:panelGroup>
+                            <p:dataTable id="userGroupTable" value="#{item.getUserGroupCollection()}" var="ug" tableStyle="width:auto" styleClass="table table-nonfluid table-striped table-hover">
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="#{bundle.ListUserTitle_UserGroups}"/>
+                                    </f:facet>
+                                    <h:panelGroup id="groupname">
+                                        <h:outputText value="#{ug.groupname}"/>
+                                    </h:panelGroup>
+                                </p:column>
+                                <p:column>
+                                    <h:commandLink id="deleteGroupButton" styleClass="icon-remove" title="#{bundle.Tooltip_Delete}" rendered="#{item.editing}" >
+                                        <p:ajax event="click" update=":form1:panelGroup1 :form1:panelGrid1 :form1:messagePanel" listener="#{UserController.removeUserGroup(item, ug)}"/>
+                                    </h:commandLink>
+                                </p:column>
+                            </p:dataTable>
+                        </p:panel>
+                    </p:rowExpansion>
+                </p:dataTable>
+            </h:panelGroup>
+        </ui:define>
+    </ui:composition>
+
+</html>
