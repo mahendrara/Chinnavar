@@ -1,0 +1,7 @@
+com\alstom\openschedule\repository\CustomerRepository.class
+com\alstom\openschedule\HelloWorld.class
+com\alstom\openschedule\HibernateUtil.class
+com\alstom\openschedule\Demo.class
+com\alstom\openschedule\controller\Customercontroller.class
+com\alstom\openschedule\model\Customer.class
+com\alstom\openschedule\model\Editable.class

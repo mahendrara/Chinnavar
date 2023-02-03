@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      >
+    <h:head>
+    	  
+    </h:head>
+    <h:body>
+    	
+    	<h1>Open Schedule Customers list</h1>
+    	
+           <h:panelGrid id="panelGrid1" columns="1" >
+                <h:commandButton id="addButton" value="Add new" >
+                    <f:ajax event="click" render="list @this" listener="#{customerService.create}"></f:ajax>
+                </h:commandButton>
+           </h:panelGrid>
+           
+           <ui:remove>
+             <h:selectOneMenu id="areaMenu" value="0" rendered="#{customerService.select}">
+                                <f:selectItems value="#{customerService.ids}" var="selectID" itemValue="#{selectID}"/>
+                                <f:ajax execute="@this" listener="#{customerService.Bring}"></f:ajax>
+              </h:selectOneMenu>
+             </ui:remove>
+           
+    	 <h:panelGroup id ="list">
+    	 <h:form>
+    		<h:dataTable value="#{customerService.items}"   var="o">
+           
+    			<h:column>
+    				<f:facet name="header">Id</f:facet>
+    				<h:panelGroup id="oid">
+    				 <h:outputText value="#{o.id}" rendered="#{not o.editing}"/>
+    				 <h:inputText  value="#{o.id}" rendered="#{o.editing}" required="true"/>
+    			    </h:panelGroup>
+    			</h:column>
+    			
+    			<h:column>
+    				<f:facet name="header">Customer Name</f:facet>
+    				<h:panelGroup id="oname" >
+    				  <h:outputText value="#{o.name}" rendered="#{not o.editing}"/>
+    				  <h:inputText value="#{o.name}" rendered="#{o.editing}" required="true" />
+    			    </h:panelGroup>
+    			</h:column>
+    			
+    			<h:column>
+    			
+    				<f:facet name="header">Customer email</f:facet>
+    				<h:panelGroup id="oemail">
+    	             <h:outputText value="#{o.email}" rendered="#{not o.editing}"/>
+    	             <h:inputText  value="#{o.email}" rendered="#{o.editing}" required="true" />
+    			</h:panelGroup>
+    			</h:column>
+    			
+    			<h:column>
+    			
+    				<f:facet name="header">Phone no</f:facet>
+    			<h:panelGroup id="ophone">
+    				<h:outputText value="#{o.phone}" rendered="#{not o.editing}"/>
+    				<h:inputText  value="#{o.phone}" rendered="#{o.editing}" required="true"/>
+    			</h:panelGroup>
+    			</h:column>
+    			
+    			<h:column>
+    			   <f:facet name="header">
+                            <h:outputText value="&nbsp;"/>
+                    </f:facet>
+                   
+    			<h:commandButton value="Edit" rendered="#{not o.editing}"> 
+    			          <f:ajax event="click" execute="oid oname oemail ophone" render="list @this" listener="#{customerService.activateEdit(o)}"/>
+    			</h:commandButton>
+    			 <h:outputText value=" "/>
+    			  <h:commandButton value="Delete" rendered = "#{not o.editing}">
+                <f:ajax render="list @this" listener="#{customerService.delete(o)}"/>
+            </h:commandButton>
+    			
+    			 <h:outputText value=" "/>
+    			<h:commandButton value="Save" type="submit" action="#{customerService.save(o)}" rendered="#{o.editing}"> 
+    			         <f:ajax event="click" execute="oid oname oemail ophone" render="list @this" listener="#{customerService.save(o)}"/>
+    			</h:commandButton>
+    			
+    			 <h:outputText value=" "/>
+    			<h:commandButton value="Cancel" rendered="#{o.editing or o.creating}"> 
+    			         <f:ajax event="click" render="list @this" listener="#{customerService.cancel(o)}"/>
+    			</h:commandButton>
+    			</h:column>
+    		</h:dataTable>
+    		</h:form>
+    		</h:panelGroup>
+    		
+    </h:body>
+</html>
